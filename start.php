@@ -16,7 +16,9 @@ register_elgg_event_handler('init', 'system', 'schools_init');
 function schools_init() {
 	include_once('lib/schools.php');
 	
-	// Actions	
+	// Register actions
+	$action_base = elgg_get_plugin_path() . 'schools/actions/schools';
+	elgg_register_action('schools/edit', "$action_base/edit.php");
 	
 	// Add submenus
 	register_elgg_event_handler('pagesetup','system','schools_submenus');
@@ -36,15 +38,27 @@ function schools_page_handler($page) {
 	set_context('admin');
 	elgg_admin_add_plugin_settings_sidemenu();
 	
-	$title = elgg_echo('assign:menu');
-	$content = schools_get_admin_content();
-	$body = elgg_view_layout('administration', array('content' => $content));
+	$page_type = $page[0];
+	switch($page_type) {
+		case 'edit':
+			schools_get_edit_content($page_type, $page[1]);
+			break;
+		case 'add': 
+			schools_get_edit_content($page_type, $page[1]);
+			break;
+		case 'view':
+			//schools_get_view_content($page_type, $page[1]);
+			break;
+		default:
+			schools_get_admin_content();
+			break;
+	}
 	
-	echo elgg_view_page($title, $body, 'admin');
+	return true;
 }
 
 /**
- * Setup assign submenus
+ * Setup schools submenus
  */
 function schools_submenus() {
 	$item = array(
