@@ -14,6 +14,8 @@ $registration_code_label = elgg_echo("schools:label:schoolregcode");
 $registration_code_input = elgg_view("input/text", array('internalname' => 'registration_code'));
 
 $submit_input = elgg_view('input/submit', array('internalname' => 'submit', 'value' => elgg_echo('submit')));	
+
+// Need to grab the session information from the querystring
 $session_input = elgg_view('input/hidden', array('internalname' => 'session', 'value' => get_input('session')));
 
 $form_body = <<<EOT
