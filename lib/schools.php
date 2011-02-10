@@ -71,6 +71,16 @@ function schools_get_view_content($type, $guid) {
 	echo elgg_view_page($title, $body, 'admin');
 }
 
+function schools_get_authorize_content() {
+	$title = elgg_echo('schools:label:register');
+	
+	$content = elgg_view('forms/schools/authorize') . $content;
+	
+	$body = elgg_view_layout('one_column_with_sidebar', $content);
+	
+	echo elgg_view_page('', $body);
+}
+
 /**
  * Prepare the add/edit form variables
  *
@@ -137,7 +147,11 @@ function get_school_from_registration_code($reg_code) {
 		'metadata_value' => $lookup_code
 	));
 	
-	return $school;
+	if ($school) {
+		return $school;
+	}
+	
+	return false;
 } 
 
 

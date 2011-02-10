@@ -21,6 +21,8 @@ function schools_init() {
 	elgg_register_action('schools/edit', "$action_base/edit.php", 'admin');
 	elgg_register_action('schools/delete', "$action_base/delete.php", 'admin');
 	elgg_register_action('schools/refresh', "$action_base/refresh.php", 'admin');
+	elgg_register_action('schools/register', "$action_base/register.php", 'public');
+	elgg_register_action('schools/authorize', "$action_base/authorize.php", 'public');
 	
 	// Register a create handler for school entities
 	elgg_register_event_handler('create', 'object', 'school_create_event_listener');
@@ -43,22 +45,30 @@ function schools_init() {
 *
 */
 function schools_page_handler($page) {	
-	admin_gatekeeper();
-	set_context('admin');
-	elgg_admin_add_plugin_settings_sidemenu();
-	
+
 	$page_type = $page[0];
 	switch($page_type) {
 		case 'edit':
+			set_context('admin');
+			admin_gatekeeper();
 			schools_get_edit_content($page_type, $page[1]);
 			break;
 		case 'add': 
+			set_context('admin');
+			admin_gatekeeper();
 			schools_get_edit_content($page_type, $page[1]);
 			break;
 		case 'view':
+			set_context('admin');
+			admin_gatekeeper();
 			schools_get_view_content($page_type, $page[1]);
 			break;
+		case 'facebookauthorize':
+			schools_get_authorize_content();
+			break;
 		default:
+			set_context('admin');
+			admin_gatekeeper();
 			schools_get_admin_content();
 			break;
 	}

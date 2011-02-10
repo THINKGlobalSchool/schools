@@ -56,7 +56,7 @@ if ($vars['full']) {
 	$contact_address_label = elgg_echo("schools:label:contact:address");
 	$registration_code_label = elgg_echo("schools:label:regcode");
 	$private_code_label = elgg_echo("schools:label:privatecode");
-	
+		
 	echo <<<___END
 		<div class='school-header'>
 			<div class='school-header-title'><h2>$linked_title</h2></div>
