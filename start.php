@@ -18,13 +18,21 @@ function schools_init() {
 	
 	// Register actions
 	$action_base = elgg_get_plugin_path() . 'schools/actions/schools';
-	elgg_register_action('schools/edit', "$action_base/edit.php");
+	elgg_register_action('schools/edit', "$action_base/edit.php", 'admin');
+	elgg_register_action('schools/delete', "$action_base/delete.php", 'admin');
+	elgg_register_action('schools/refresh', "$action_base/refresh.php", 'admin');
+	
+	// Register a create handler for school entities
+	elgg_register_event_handler('create', 'object', 'school_create_event_listener');
 	
 	// Add submenus
 	register_elgg_event_handler('pagesetup','system','schools_submenus');
 	
 	// Page handler
 	register_page_handler('schools','schools_page_handler');
+	
+	// Register URL handler
+	register_entity_url_handler('school_url','object', 'school');
 }
 
 /**
@@ -35,6 +43,7 @@ function schools_init() {
 *
 */
 function schools_page_handler($page) {	
+	admin_gatekeeper();
 	set_context('admin');
 	elgg_admin_add_plugin_settings_sidemenu();
 	
@@ -47,7 +56,7 @@ function schools_page_handler($page) {
 			schools_get_edit_content($page_type, $page[1]);
 			break;
 		case 'view':
-			//schools_get_view_content($page_type, $page[1]);
+			schools_get_view_content($page_type, $page[1]);
 			break;
 		default:
 			schools_get_admin_content();
@@ -56,6 +65,17 @@ function schools_page_handler($page) {
 	
 	return true;
 }
+
+/**
+ * Populates the ->getUrl() method for school entities
+ *
+ * @param ElggEntity entity
+ * @return string request url
+ */
+function school_url($entity) {
+	return elgg_get_site_url() . "pg/schools/view/{$entity->guid}/";
+}
+
 
 /**
  * Setup schools submenus
@@ -67,4 +87,14 @@ function schools_submenus() {
 	);
 
 	elgg_add_submenu_item($item, 'admin');
+}
+
+/**
+ * School created, generate registration code
+ */
+function school_create_event_listener($event, $object_type, $object) {
+	if ($object->getSubtype() == 'school') {
+		school_generate_registration_code($object);
+	}
+	return true;
 }

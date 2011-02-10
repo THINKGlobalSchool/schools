@@ -24,13 +24,28 @@ $english = array(
 	'schools:label:contact:phone' => 'Contact Phone Number',
 	'schools:label:contact:email' => 'Contact Email Address',
 	'schools:label:contact:address' => 'Contact Address',
+	'schools:label:main' => 'Schools Management', 
+	'schools:label:regcode' => 'Registration Code', 
+	'schools:label:privatecode' => 'Private Code',
+	'schools:label:new' => 'Create New School',
+	'schools:label:edit' => 'Edit',
+	'schools:label:privatekey' => 'Private Key',
+	'schools:label:privatekeydesc' => 'Used to generate school registration codes. Changing this will invalidate any existing code (Can be anything you want)',
+	'schools:label:refresh' => 'Refresh Code',
+	'schools:label:refreshconfirm' => 'Are you sure you want to refresh the registration code? This will invalidate the existing code!',
 	
+
 	// Confirmation
-	'schools:success:create' => 'Successfully Created New School!',
+	'schools:success:save' => 'Successfully saved school',
+	'schools:success:delete' => 'Successfully Deleted School',
+	'schools:success:refresh' => 'Code refreshed',
 		
 	// Error 
-	'schools:error:create' => 'There was an error creating the school',
+	'schools:error:save' => 'There was an error saving the school',
 	'schools:error:requiredfields' => 'One or more required fields are missing',
+	'schools:error:notfound' => 'School not found',
+	'schools:error:delete' => 'School Deleted',
+	'schools:error:edit' => 'There was an error editing the school',
 );
 
 add_translation('en',$english);

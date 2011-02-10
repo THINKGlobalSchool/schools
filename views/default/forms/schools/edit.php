@@ -15,6 +15,8 @@ if (isset($vars['entity'])) {
 	$entity_hidden  = elgg_view('input/hidden', array('internalname' => 'school_guid', 'value' => $vars['entity']->getGUID()));
 } 
 
+$style = "<style type='text/css'>" . elgg_view('schools/admin_css') . "</style>";
+
 $action = "schools/edit";
 
 // Prep values
@@ -84,4 +86,4 @@ $form_body = <<<EOT
 </div>
 	
 EOT;
-echo elgg_view('input/form', array('action' => "{$vars['url']}action/$action", 'body' => $form_body, 'internalid' => 'school-edit-form'));
+echo $style . elgg_view('input/form', array('action' => "{$vars['url']}action/$action", 'body' => $form_body, 'internalid' => 'school-edit-form'));
