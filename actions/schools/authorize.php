@@ -15,6 +15,7 @@ $registration_code = get_input('registration_code');
 elgg_set_ignore_access(TRUE);
 if ($school = get_school_from_registration_code(trim($registration_code))) {	
 	// Call the facebookservice login
+	set_input('school_guid', $school->getGUID());
 	facebookservice_login();
 } else {
 	elgg_set_ignore_access(FALSE);
