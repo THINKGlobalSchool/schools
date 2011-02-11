@@ -25,6 +25,7 @@ $english = array(
 	'schools:label:contact:email' => 'Contact Email Address',
 	'schools:label:contact:address' => 'Contact Address',
 	'schools:label:main' => 'Schools Management', 
+	'schools:label:code' => 'Code',
 	'schools:label:regcode' => 'Registration Code', 
 	'schools:label:schoolregcode' => 'School Registration Code', 
 	'schools:label:privatecode' => 'Private Code',

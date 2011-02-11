@@ -99,10 +99,12 @@ if ($vars['full']) {
 		$school_users
 ___END;
 } else {
+	$registration_code_label = elgg_echo("schools:label:code");
 	echo <<<___END
 		<div class='school-listing'>
 			<div class='school-title'>$linked_title</div>
 			<div class='school-controls'>$edit</div>
+			<div class='school-code'>$registration_code_label: $school->registration_code</div>
 		</div>
 ___END;
 }

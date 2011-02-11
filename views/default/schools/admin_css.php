@@ -82,6 +82,15 @@
 	float: right;
 }
 
+.school-code {
+	width: auto;
+	float: right;
+	font-size: 16px;
+	font-weight: bold;
+	margin-right: 50px;
+	color: #444;
+}
+
 /** General **/
 
 .school-header {

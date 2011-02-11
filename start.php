@@ -25,8 +25,7 @@ function schools_init() {
 	elgg_register_action('schools/delete', "$action_base/delete.php", 'admin');
 	elgg_register_action('schools/refresh', "$action_base/refresh.php", 'admin');
 	elgg_register_action('schools/register', "$action_base/register.php", 'public');
-	elgg_register_action('schools/authorize', "$action_base/authorize.php", 'public');
-	
+	elgg_register_action('schools/authorize', "$action_base/authorize.php", 'public'); 
 	
 	// Register a create handler for school entities
 	elgg_register_event_handler('create', 'object', 'school_create_event_listener');

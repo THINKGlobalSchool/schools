@@ -122,10 +122,9 @@ function schools_prepare_form_vars($school = null) {
  * @return bool 
  */
 function school_generate_registration_code($school) {
-	$random = get_random_string(15);
-	$school->random_code = $random; // Used to generate the reg code hash
+	$random = get_random_string(6);
 	// This will be the public reg code
-	$school->registration_code = hash("md5", $school->getGUID() . $random);
+	$school->registration_code = $random;
 	// This will be the private code to lookup
 	$school->private_code = hash("md5", get_plugin_setting('schools_private_key', 'schools') . $school->registration_code);
 	return true;
@@ -205,8 +204,18 @@ function assign_user_to_school($user, $school) {
  * @param ElggEntity $school
  * @return array
  */
-function get_school_users() {
-	
+function get_school_users($school) {
+	if (elgg_instanceof($school, 'object', 'school')) {
+		return elgg_get_entities_from_relationship(array(
+															'relationship' => SCHOOL_RELATIONSHIP,
+															'relationship_guid' => $school->getGUID(),
+															'inverse_relationship' => TRUE,
+															'types' => array('user'),
+															'limit' => 0,
+															'offset' => 0,
+															'count' => false,
+														));
+	}
 }
 
 
@@ -216,7 +225,7 @@ function get_school_users() {
  * @param int $length
  */
 function get_random_string($length = 10) {
-    $characters = "0123456789abcdefghijklmnopqrstuvwxyz";
+    $characters = "abcdefghijklmnopqrstuvwxyz";
     $string = "";    
     for ($p = 0; $p < $length; $p++) {
         $string .= $characters[mt_rand(0, strlen($characters))];

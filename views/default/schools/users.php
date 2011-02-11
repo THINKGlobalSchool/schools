@@ -10,15 +10,7 @@
  * 
  */
 
-$users = elgg_get_entities_from_relationship(array(
-													'relationship' => SCHOOL_RELATIONSHIP,
-													'relationship_guid' => $vars['entity']->getGUID(),
-													'inverse_relationship' => TRUE,
-													'types' => array('user'),
-													'limit' => 0,
-													'offset' => 0,
-													'count' => false,
-												));
+$users = get_school_users($vars['entity']);
 												
 echo "<h2>" . elgg_echo('schools:label:users') . "</h2>";
 
