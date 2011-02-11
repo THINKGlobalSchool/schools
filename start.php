@@ -27,8 +27,12 @@ function schools_init() {
 	elgg_register_action('schools/register', "$action_base/register.php", 'public');
 	elgg_register_action('schools/authorize', "$action_base/authorize.php", 'public');
 	
+	
 	// Register a create handler for school entities
 	elgg_register_event_handler('create', 'object', 'school_create_event_listener');
+	
+	// Register a create handler for user entities
+	elgg_register_event_handler('create', 'user', 'schools_new_facebook_user_listener');
 	
 	// Add submenus
 	register_elgg_event_handler('pagesetup','system','schools_submenus');
@@ -100,6 +104,10 @@ function schools_submenus() {
 	);
 
 	elgg_add_submenu_item($item, 'admin');
+}
+
+function schools_new_facebook_user_listener($event, $object_type, $object) {
+	error_log('school_guid: ' . get_input('school_guid'));
 }
 
 /**
