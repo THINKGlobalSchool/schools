@@ -16,6 +16,8 @@ elgg_set_ignore_access(TRUE);
 if ($school = get_school_from_registration_code(trim($registration_code))) {	
 	// Call the facebookservice login
 	set_input('school_guid', $school->getGUID());
+	// Set context for event listeners 
+	elgg_set_context('facebook_create_user');
 	facebookservice_login();
 } else {
 	elgg_set_ignore_access(FALSE);

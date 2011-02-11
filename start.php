@@ -106,8 +106,16 @@ function schools_submenus() {
 	elgg_add_submenu_item($item, 'admin');
 }
 
+/** 
+ * New user created, if we're the facebook_create_user context
+ * assign this user to the school they are registering for. 
+ * This requires the request variable school_guid = xxxx
+ */
 function schools_new_facebook_user_listener($event, $object_type, $object) {
-	error_log('school_guid: ' . get_input('school_guid'));
+	if (elgg_get_context() == 'facebook_create_user' && $school_guid = get_input('school_guid')) {
+		$school = get_entity($school_guid);
+		assign_user_to_school($object, $school);
+	}
 }
 
 /**
