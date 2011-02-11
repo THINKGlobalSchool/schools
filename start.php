@@ -64,21 +64,7 @@ function schools_page_handler($page) {
 			schools_get_view_content($page_type, $page[1]);
 			break;
 		case 'facebookauthorize':
-			// Determine if we have a user already (same login from facebookservice_lib)
-			$values = array(
-				'plugin:settings:facebookservice:access_token' => $session['access_token'],
-				'plugin:settings:facebookservice:uid' => $session['uid'],
-			);
-			
-			$users = get_entities_from_private_setting_multi($values, 'user', '', 0, '', 0);
-			
-			if (count($users) == 1) {
-				// Got a user.. do the usual
-				facebookservice_login();
-			} else {
-				// New user registering, get in the middle and ask for a reg code
-				schools_get_authorize_content();
-			}
+			schools_authorize();
 			break;
 		default:
 			set_context('admin');

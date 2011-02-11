@@ -154,6 +154,40 @@ function get_school_from_registration_code($reg_code) {
 	return false;
 } 
 
+/** 
+ * Helper function using facebookservice code to route authorization 
+ * when attempting to login with facebook 
+ * - This is a little messy but it works.. 
+ * - Relies on valid session data from facebook ($_REQUEST['session'])
+ */
+function schools_authorize() {
+	// Check to make sure we're setup with the facebookservice plugin
+	if (!facebookservice_use_fbconnect()) {
+	        forward();
+	}
+	
+	// Init facebook with current $_REQUEST date
+	$facebook = facebookservice_api();
+	if (!$session = $facebook->getSession()) {
+	        forward();
+	}
+	
+	// Determine if we have a user already (same logic from facebookservice_lib)
+	$values = array(
+	   'plugin:settings:facebookservice:access_token' => $session['access_token'],
+	   'plugin:settings:facebookservice:uid' => $session['uid'],
+	);
+
+	$users = get_entities_from_private_setting_multi($values, 'user', '', 0, '', 0);
+
+	if ($users && count($users) == 1) {
+		// Got a user.. do the usual
+		facebookservice_login();
+	} else {
+		// New user registering, get in the middle and ask for a reg code
+		schools_get_authorize_content();
+	}
+}
 
 /**
  * Generate a random string with numbers and letters
@@ -168,3 +202,4 @@ function get_random_string($length = 10) {
     }
     return $string;
 }
+
