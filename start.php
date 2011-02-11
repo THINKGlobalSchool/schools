@@ -16,6 +16,9 @@ register_elgg_event_handler('init', 'system', 'schools_init');
 function schools_init() {
 	include_once('lib/schools.php');
 	
+	// Define school relationship constant
+	define('SCHOOL_RELATIONSHIP', 'belongs_to_school');
+	
 	// Register actions
 	$action_base = elgg_get_plugin_path() . 'schools/actions/schools';
 	elgg_register_action('schools/edit', "$action_base/edit.php", 'admin');

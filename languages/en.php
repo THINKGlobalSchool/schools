@@ -35,6 +35,7 @@ $english = array(
 	'schools:label:refresh' => 'Refresh Code',
 	'schools:label:refreshconfirm' => 'Are you sure you want to refresh the registration code? This will invalidate the existing code!',
 	'schools:label:register' => 'Register with School',
+	'schools:label:users' => 'Users',
 	
 
 	// Confirmation
@@ -49,6 +50,7 @@ $english = array(
 	'schools:error:delete' => 'School Deleted',
 	'schools:error:edit' => 'There was an error editing the school',
 	'schools:error:invalidcode' => 'Invalid registration code',
+	'schools:error:schoolregerror' => 'Could not register user with school', 
 );
 
 add_translation('en',$english);

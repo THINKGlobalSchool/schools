@@ -24,7 +24,7 @@ if ($CONFIG->allow_registration) {
 		// Check for valid registration code
 		$ia = elgg_get_ignore_access();
 		elgg_set_ignore_access(TRUE);
-		if (!get_school_from_registration_code(trim($registration_code))) {
+		if (!$school = get_school_from_registration_code(trim($registration_code))) {
 			elgg_set_ignore_access($ia);
 			throw new RegistrationException(elgg_echo('schools:error:invalidcode'));
 		}
@@ -42,6 +42,17 @@ if ($CONFIG->allow_registration) {
 
 		if ($guid) {
 			$new_user = get_entity($guid);
+			
+			$ia = elgg_get_ignore_access();
+			elgg_set_ignore_access(TRUE);
+			// Assign user to school
+			if (!assign_user_to_school($new_user, $school)) {
+				elgg_set_ignore_access($ia);
+				$new_user->delete();
+				throw new RegistrationException(elgg_echo('schools:error:schoolregerror'));
+				
+			}		
+			elgg_set_ignore_access($ia);
 
 			// allow plugins to respond to self registration
 			// note: To catch all new users, even those created by an admin,

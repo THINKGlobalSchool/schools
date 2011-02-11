@@ -148,7 +148,7 @@ function get_school_from_registration_code($reg_code) {
 	));
 	
 	if ($school) {
-		return $school;
+		return $school[0];
 	}
 	
 	return false;
@@ -188,6 +188,27 @@ function schools_authorize() {
 		schools_get_authorize_content();
 	}
 }
+
+/** 
+ * Assign a user to a school 
+ * @param ElggUser 		$user
+ * @param ElggEntity 	$school
+ * @return bool
+ */
+function assign_user_to_school($user, $school) {
+	$result = add_entity_relationship($user->getGUID(), SCHOOL_RELATIONSHIP, $school->getGUID());
+	return $result;
+}
+
+/** 
+ * Return an array of a schools related users
+ * @param ElggEntity $school
+ * @return array
+ */
+function get_school_users() {
+	
+}
+
 
 /**
  * Generate a random string with numbers and letters

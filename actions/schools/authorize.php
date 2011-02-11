@@ -13,8 +13,7 @@
 $registration_code = get_input('registration_code');
 
 elgg_set_ignore_access(TRUE);
-if (get_school_from_registration_code(trim($registration_code))) {
-	elgg_set_ignore_access(FALSE);
+if ($school = get_school_from_registration_code(trim($registration_code))) {	
 	// Call the facebookservice login
 	facebookservice_login();
 } else {

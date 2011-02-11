@@ -56,6 +56,8 @@ if ($vars['full']) {
 	$contact_address_label = elgg_echo("schools:label:contact:address");
 	$registration_code_label = elgg_echo("schools:label:regcode");
 	$private_code_label = elgg_echo("schools:label:privatecode");
+	
+	$school_users = elgg_view('schools/users', $vars);
 		
 	echo <<<___END
 		<div class='school-header'>
@@ -92,7 +94,9 @@ if ($vars['full']) {
 				<td class='label'><label>$private_code_label</label></td>
 				<td class='content'><strong>$school->private_code</strong></td>
 			</tr>
-		</table>
+		</table>			
+		
+		$school_users
 ___END;
 } else {
 	echo <<<___END
