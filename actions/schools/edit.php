@@ -17,6 +17,7 @@ $contact_name = get_input('contact_name');
 $contact_phone = get_input('contact_phone');
 $contact_email = get_input('contact_email');
 $contact_address = get_input('contact_address');
+$contact_website = get_input('contact_website');
 $school_guid = get_input('school_guid', NULL);
 
 // Create Sticky form
@@ -47,6 +48,7 @@ $school->contact_name = $contact_name;
 $school->contact_phone = $contact_phone;
 $school->contact_email = $contact_email;
 $school->contact_address = $contact_address;
+$school->contact_website = $contact_website;
 
 
 // Try saving

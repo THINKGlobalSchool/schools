@@ -54,6 +54,7 @@ if ($vars['full']) {
 	$contact_phone_label = elgg_echo("schools:label:contact:phone");
 	$contact_email_label = elgg_echo("schools:label:contact:email");
 	$contact_address_label = elgg_echo("schools:label:contact:address");
+	$contact_website_label = elgg_echo("schools:label:contact:website");
 	$registration_code_label = elgg_echo("schools:label:regcode");
 	$private_code_label = elgg_echo("schools:label:privatecode");
 	
@@ -69,6 +70,10 @@ if ($vars['full']) {
 			<tr>
 				<td class='label'><label>$description_label</label></td>
 				<td class='content'>$school->description</td>
+			</tr>
+			<tr>
+				<td class='label'><label>$contact_website_label</label></td>
+				<td class='content'>$school->contact_website</td>
 			</tr>
 			<tr>
 				<td class='label'><label>$contact_name_label</label></td>

@@ -11,6 +11,8 @@
  */
 $english = array(
 	
+	'schools:school' => 'School',
+	
 	// Page titles 
 	'schools:title:admin' => 'Manage Schools',
 	'schools:title:add' => 'Add New School', 
@@ -24,6 +26,7 @@ $english = array(
 	'schools:label:contact:phone' => 'Contact Phone Number',
 	'schools:label:contact:email' => 'Contact Email Address',
 	'schools:label:contact:address' => 'Contact Address',
+	'schools:label:contact:website' => 'Website',
 	'schools:label:main' => 'Schools Management', 
 	'schools:label:code' => 'Code',
 	'schools:label:regcode' => 'Registration Code', 

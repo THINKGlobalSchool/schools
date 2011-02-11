@@ -97,6 +97,7 @@ function schools_prepare_form_vars($school = null) {
 		'contact_phone' => '',
 		'contact_email' => '',
 		'contact_address' => '',
+		'contact_website' => '',
 	);
 
 	if ($school) {
@@ -215,6 +216,57 @@ function get_school_users($school) {
 															'offset' => 0,
 															'count' => false,
 														));
+	}
+}
+
+/** 
+ * Return an array of a schools related users
+ * @param ElggUser $school
+ * @return array
+ */
+function get_user_school($user) {
+	if ($user) {
+	
+		
+		$school = elgg_get_entities_from_relationship(array(
+															'relationship' => SCHOOL_RELATIONSHIP,
+															'relationship_guid' => $user->getGUID(),
+															'inverse_relationship' => FALSE,
+															'types' => array('object'),
+															'subtype' => 'school',
+ 															'limit' => 1,
+															'offset' => 0,
+															'count' => false,
+														));
+		return $school[0];
+	}
+}
+
+/**
+ * Helper function to grab a link, or a title
+ * of a users school. If there is no school, check 
+ * users email, if TGS, then return TGS info
+ * @param ElggUser $user
+ * @return string
+ */
+function get_user_school_info($user) {
+	$user_school = get_user_school($user);
+	
+	// If we have a school, great, display it
+	if ($user_school) {
+		if ($user_school->contact_website) {
+			$school_info = "<a href='" . $user_school->contact_website . "'>" . $user_school->title . "</a>";
+		} else {
+			$school_info = $user_school->title;
+		}
+		return $school_info;
+	} else {
+		// Check for TGS domain
+		if (preg_match("/.*?(thinkglobalschool)/is", $user->email)) {
+			return "<a href='http://www.thinkglobalschool.org'>THINK Global School</a>";
+		}
+		// Nothing..
+		return false;
 	}
 }
 

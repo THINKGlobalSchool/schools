@@ -29,6 +29,7 @@ $contact_name = elgg_get_array_value('contact_name', $values, '');
 $contact_phone = elgg_get_array_value('contact_phone', $values, '');
 $contact_email = elgg_get_array_value('contact_email', $values, '');
 $contact_address = elgg_get_array_value('contact_address', $values, '');
+$contact_website = elgg_get_array_value('contact_website', $values, '');
 
 // Labels/Input
 $title_label = elgg_echo('title');
@@ -36,6 +37,9 @@ $title_input = elgg_view('input/text', array('internalname' => 'title', 'value' 
 
 $description_label = elgg_echo("description");
 $description_input = elgg_view("input/longtext", array('internalname' => 'description', 'value' => $description));
+
+$contact_website_label = elgg_echo("schools:label:contact:website");
+$contact_website_input = elgg_view("input/text", array('internalname' => 'contact_website', 'value' => $contact_website));
 
 $contact_name_label = elgg_echo("schools:label:contact:name");
 $contact_name_input = elgg_view("input/text", array('internalname' => 'contact_name', 'value' => $contact_name));
@@ -62,6 +66,10 @@ $form_body = <<<EOT
 	<div>
 		<label>$description_label</label><br />
         $description_input
+	</div><br />
+	<div>
+		<label>$contact_website_label</label><br />
+        $contact_website_input
 	</div><br />
 	<div>
 		<label>$contact_name_label</label><br />

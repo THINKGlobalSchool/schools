@@ -27,6 +27,9 @@ function schools_init() {
 	elgg_register_action('schools/register', "$action_base/register.php", 'public');
 	elgg_register_action('schools/authorize', "$action_base/authorize.php", 'public'); 
 	
+	// Extend profile details with a super low priority to display a users school 
+	elgg_extend_view('profile/profile_contents/details', 'schools/profile_details', 1);
+	
 	// Register a create handler for school entities
 	elgg_register_event_handler('create', 'object', 'school_create_event_listener');
 	
