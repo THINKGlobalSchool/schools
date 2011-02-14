@@ -55,6 +55,14 @@ $english = array(
 	'schools:error:edit' => 'There was an error editing the school',
 	'schools:error:invalidcode' => 'Invalid registration code',
 	'schools:error:schoolregerror' => 'Could not register user with school', 
+
+			// Notifications
+	'schools:notifyadmin:subject' => 'Spotx New User Notice',
+	'schools:notifyadmin:body' => 'New user registered:
+	
+	User: %s
+	School: %s
+	',
 );
 
 add_translation('en',$english);

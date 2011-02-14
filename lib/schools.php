@@ -270,6 +270,39 @@ function get_user_school_info($user) {
 	}
 }
 
+/** 
+ * Helper function to grab and notifiy admin users that 
+ * a new user has registered with a school
+ * @param ElggEntity 	$school
+ * @param ElggUser 		$user
+ * @return bool
+ */
+function schools_register_notify_admins($school, $user) {
+	global $CONFIG;
+	
+	// Get admins
+	$admins = elgg_get_entities_from_metadata(array(
+		'type' => 'user',
+		'limit' => 0,
+		'joins' => array("JOIN {$CONFIG->dbprefix}users_entity ue on ue.guid = e.guid"),
+		'wheres' => array('ue.admin = "yes"'),
+	));
+	
+	foreach($admins as $admin) {
+		if ($admin) {
+			$user_link = "<a href='{$user->getURL()}'>{$user->name}</a>";
+			$school_link = "<a href='{$school->getURL()}'>{$school->title}</a>";
+		
+			notify_user( 
+				$admin->getGUID(), $CONFIG->site->guid, 
+				elgg_echo('schools:notifyadmin:subject'), 
+				elgg_echo('schools:notifyadmin:body', array($user_link, $school_link))
+			);
+		}
+	}
+	
+}
+
 
 /**
  * Generate a random string with numbers and letters

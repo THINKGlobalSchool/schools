@@ -117,6 +117,9 @@ function schools_new_facebook_user_listener($event, $object_type, $object) {
 	if (elgg_get_context() == 'facebook_create_user' && $school_guid = get_input('school_guid')) {
 		$school = get_entity($school_guid);
 		assign_user_to_school($object, $school);
+		
+		// Notify admins
+		schools_register_notify_admins($school, $object);
 	}
 }
 

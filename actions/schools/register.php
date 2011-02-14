@@ -75,6 +75,10 @@ if ($CONFIG->allow_registration) {
 			}
 
 			system_message(elgg_echo("registerok", array($CONFIG->sitename)));
+			
+			// Notifiy admins
+			schools_register_notify_admins($school, $new_user);
+			
 
 			// if exception thrown, this probably means there is a validation
 			// plugin that has disabled the user
