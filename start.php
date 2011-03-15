@@ -16,6 +16,9 @@ register_elgg_event_handler('init', 'system', 'schools_init');
 function schools_init() {
 	include_once('lib/schools.php');
 	
+	// Add members to the main menu
+	add_menu(elgg_echo("Members"), elgg_get_site_url() . 'mod/members');
+	
 	// Define school relationship constant
 	define('SCHOOL_RELATIONSHIP', 'belongs_to_school');
 	
@@ -74,6 +77,9 @@ function schools_page_handler($page) {
 			break;
 		case 'facebookauthorize':
 			schools_authorize();
+			break;
+		case 'members':
+			schools_get_members_content();
 			break;
 		default:
 			set_context('admin');

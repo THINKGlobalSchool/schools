@@ -51,6 +51,7 @@ function schools_get_edit_content($type, $guid) {
 	echo elgg_view_page($title, $body, 'admin');
 }
 
+/** Get view school content **/
 function schools_get_view_content($type, $guid) {
 	$school = get_entity($guid);
 	
@@ -71,6 +72,7 @@ function schools_get_view_content($type, $guid) {
 	echo elgg_view_page($title, $body, 'admin');
 }
 
+/** Get authorize content **/
 function schools_get_authorize_content() {
 	$title = elgg_echo('schools:label:register');
 	
@@ -79,6 +81,65 @@ function schools_get_authorize_content() {
 	$body = elgg_view_layout('one_column_with_sidebar', $content);
 	
 	echo elgg_view_page('', $body);
+}
+
+/** Get view schools members  **/
+function schools_get_members_content() {	
+	$title = elgg_echo('members:members');
+	
+	$filter = get_input('filter', null);
+	
+	if (!$filter) {
+		// If no filter, get out of here and display regular members page
+		forward(elgg_get_site_url() . 'mod/members/');
+	}
+	
+	// count members
+	$members = get_number_users();
+
+	// title
+	$pagetitle = elgg_echo("members:members")." ({$members})";
+	$content = elgg_view_title($pagetitle);
+	
+	$content .= elgg_view('schools/school_nav', array('filter' => $filter));
+	
+	$options = array(
+		'type' => 'user',
+		'full_view' => FALSE
+	);
+	
+	if (elgg_instanceof($school = get_entity($filter), 'object', 'school')) {
+		$options['relationship'] = SCHOOL_RELATIONSHIP;
+		$options['relationship_guid'] = $school->getGUID();
+		$options['inverse_relationship'] = TRUE;
+		
+	} else if (strtolower($filter) == 'tgs') { // Special TGS filter
+		// Include only users with tgs domains
+		global $CONFIG;
+		
+		// Join elgg_users_entity table so we can check the email
+		$options['joins'] = "JOIN {$CONFIG->dbprefix}users_entity ue on ue.guid = e.guid";
+		
+		// I think a LIKE comparison is ok here..
+		$options['wheres'] = "(ue.email like '%@thinkglobalschool.com' OR ue.email like '%@thinkglobalschool.org')";
+	}
+	
+	$content .= elgg_list_entities_from_relationship($options);		
+
+	// This is gross.. but its the only way to make this look like it belongs
+	// and if the members plugin can cheat, then so can I
+	$sidebar .= "<ul class='submenu page_navigation'><li><a href=\"" . elgg_get_site_url()."pg/friends/" . elgg_get_page_owner()->username . "\">". elgg_echo('friends') . "</a></li>";
+	$sidebar .= "<li><a href=\"" . elgg_get_site_url()."pg/friendsof/" . elgg_get_page_owner()->username . "\">". elgg_echo('friends:of') . "</a></li>";
+	$sidebar .= "<li class='selected'><a href=\"" . elgg_get_site_url()."mod/members/index.php\">". elgg_echo('members:browse') . "</a></li>";
+	$sidebar .= "</ul>";
+	$sidebar .= elgg_view("members/search");	
+		
+	$body = elgg_view_layout('one_column_with_sidebar', array(
+			'content' => $content,
+			'sidebar' => $sidebar,
+	));
+	
+	echo elgg_view_page($title, $body);
 }
 
 /**
