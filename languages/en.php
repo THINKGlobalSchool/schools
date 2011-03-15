@@ -40,6 +40,9 @@ $english = array(
 	'schools:label:refreshconfirm' => 'Are you sure you want to refresh the registration code? This will invalidate the existing code!',
 	'schools:label:register' => 'Register with School',
 	'schools:label:users' => 'Users',
+	'schools:label:members' => 'Members',
+	'schools:label:allschools' => 'All',
+	'schools:label:browseschool' => 'Browse by School',
 	
 
 	// Confirmation
