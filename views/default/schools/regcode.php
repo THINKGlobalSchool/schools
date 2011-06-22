@@ -1,6 +1,6 @@
 <?php
 /**
- * Spotx Schools settings
+ * Spotx Schools registration form extender
  * 
  * @package SpotxSchools
  * @license http://www.gnu.org/licenses/old-licenses/gpl-2.0.html GNU Public License version 2
@@ -10,13 +10,12 @@
  * 
  */
 ?>
-<p>
-	<label><?php echo elgg_echo('schools:label:privatekey'); ?></label><br />
-	<?php echo elgg_echo('schools:label:privatekeydesc'); ?><br />
-	<?php 
+<div class="mtm">
+	<label><?php echo elgg_echo('schools:label:schoolregcode'); ?></label><br />
+	<?php
 	echo elgg_view('input/text', array(
-		'name' => 'params[schools_private_key]', 
-		'value' => $vars['entity']->schools_private_key)
-	); 
+		'name' => 'school_registration_code',
+		'value' => get_input('code'),
+	));
 	?>
-</p>
+</div>

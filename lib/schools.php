@@ -10,98 +10,43 @@
  * 
  */
 
-/** Get admin page content **/
-function schools_get_admin_content() {
-	$title = elgg_echo('schools:menu');
-	
-	$content .= elgg_view("schools/controls");
-		
-	$content .= elgg_list_entities(array(
-		'type' => 'object',
-		'subtype' => 'school', 
-		'full_view' => FALSE,
-		'limit' => 10,
-	));
-	
-	$body = elgg_view_layout('administration', array('content' => $content));
-	
-	echo elgg_view_page($title, $body, 'admin');
-}
-
 /** Get schools edit/add form **/
-function schools_get_edit_content($type, $guid) {
-	elgg_push_breadcrumb(elgg_echo('schools:label:main'), elgg_get_site_url() . 'pg/schools');
-	
+function schools_get_edit_content($type, $guid = NULL) {	
+	elgg_push_breadcrumb(elgg_echo('admin:schools'), elgg_get_site_url() . 'admin/schools/manage');
 	if ($type == 'edit') {
-		$title = elgg_echo('schools:title:edit');
 		$school = get_entity($guid);
 		elgg_push_breadcrumb($school->title, $school->getURL());
-		elgg_push_breadcrumb(elgg_echo('schools:label:edit'));
-		$content = elgg_view_title($title);
-		if (elgg_instanceof($school, 'object', 'school')) {
-			$content .= elgg_view('forms/schools/edit', array('entity' => $school));
+		elgg_push_breadcrumb(elgg_echo('edit'));
+		if (!elgg_instanceof($school, 'object', 'school')) {
+			forward(REFERER);
 		}
-	} else if ($type == 'add') {
-		elgg_push_breadcrumb(elgg_echo('schools:title:add'));
-		$title = elgg_echo('schools:title:add');
-		$content = elgg_view_title($title) . elgg_view('forms/schools/edit');
-	}
-	
-	$body = elgg_view_layout('administration', array('content' => elgg_view("navigation/breadcrumbs") . $content));
-	echo elgg_view_page($title, $body, 'admin');
-}
-
-/** Get view school content **/
-function schools_get_view_content($type, $guid) {
-	$school = get_entity($guid);
-	
-	elgg_push_breadcrumb(elgg_echo('schools:label:main'), elgg_get_site_url() . 'pg/schools');
-		
-	if (elgg_instanceof($school, 'object', 'school')) {
-		$title = $school->title;
-		elgg_push_breadcrumb($title, $school->getURL());
-		$content = elgg_view_entity($school, true);
 	} else {
-		$content = elgg_echo('schools:error:notfound');
+		elgg_push_breadcrumb(elgg_echo('Add'));
+		$school = null;
 	}
 	
-	$content = elgg_view('navigation/breadcrumbs') . $content;
+	$form_vars = schools_prepare_form_vars($school);
 	
-	$body = elgg_view_layout('administration', array('content' => $content));
+	$content = elgg_view('navigation/breadcrumbs');
 	
-	echo elgg_view_page($title, $body, 'admin');
-}
-
-/** Get authorize content **/
-function schools_get_authorize_content() {
-	$title = elgg_echo('schools:label:register');
+	$content .= elgg_view_form('schools/edit', array('name' => 'school-edit-form', 'id' => 'school-edit-form'), $form_vars);
 	
-	$content = elgg_view('forms/schools/authorize') . $content;
-	
-	$body = elgg_view_layout('one_column_with_sidebar', $content);
-	
-	echo elgg_view_page('', $body);
+	echo $content;
 }
 
 /** Get view schools members  **/
 function schools_get_members_content() {	
-	$title = elgg_echo('members:members');
+	$title = elgg_echo('members');
 	
 	$filter = get_input('filter', null);
 	
 	if (!$filter) {
 		// If no filter, get out of here and display regular members page
-		forward(elgg_get_site_url() . 'mod/members/');
+		forward(elgg_get_site_url() . 'members');
 	}
 	
 	// count members
-	$members = get_number_users();
-
-	// title
-	$pagetitle = elgg_echo("members:members")." ({$members})";
-	$content = elgg_view_title($pagetitle);
-	
-	$content .= elgg_view('schools/school_nav', array('filter' => $filter));
+	$num_members = get_number_users();
 	
 	$options = array(
 		'type' => 'user',
@@ -124,21 +69,18 @@ function schools_get_members_content() {
 		$options['wheres'] = "(ue.email like '%@thinkglobalschool.com' OR ue.email like '%@thinkglobalschool.org')";
 	}
 	
-	$content .= elgg_list_entities_from_relationship($options);		
-
-	// This is gross.. but its the only way to make this look like it belongs
-	// and if the members plugin can cheat, then so can I
-	$sidebar .= "<ul class='submenu page_navigation'><li><a href=\"" . elgg_get_site_url()."pg/friends/" . elgg_get_page_owner()->username . "\">". elgg_echo('friends') . "</a></li>";
-	$sidebar .= "<li><a href=\"" . elgg_get_site_url()."pg/friendsof/" . elgg_get_page_owner()->username . "\">". elgg_echo('friends:of') . "</a></li>";
-	$sidebar .= "<li class='selected'><a href=\"" . elgg_get_site_url()."mod/members/index.php\">". elgg_echo('members:browse') . "</a></li>";
-	$sidebar .= "</ul>";
-	$sidebar .= elgg_view("members/search");	
-		
-	$body = elgg_view_layout('one_column_with_sidebar', array(
-			'content' => $content,
-			'sidebar' => $sidebar,
-	));
+	$content = elgg_list_entities_from_relationship($options);		
 	
+	$params = array(
+		'content' => $content,
+		'sidebar' => elgg_view('members/sidebar'),
+		'title' => $title . " ($num_members)",
+		'buttons' => '',
+		'filter_override' => elgg_view('members/nav', array('selected' => $filter)),
+	);
+
+	$body = elgg_view_layout('content', $params);
+
 	echo elgg_view_page($title, $body);
 }
 
@@ -159,6 +101,7 @@ function schools_prepare_form_vars($school = null) {
 		'contact_email' => '',
 		'contact_address' => '',
 		'contact_website' => '',
+		'guid' => NULL,
 	);
 
 	if ($school) {
@@ -188,7 +131,7 @@ function school_generate_registration_code($school) {
 	// This will be the public reg code
 	$school->registration_code = $random;
 	// This will be the private code to lookup
-	$school->private_code = hash("md5", get_plugin_setting('schools_private_key', 'schools') . $school->registration_code);
+	$school->private_code = hash("md5", elgg_get_plugin_setting('schools_private_key', 'schools') . $school->registration_code);
 	return true;
 }
 
@@ -198,7 +141,7 @@ function school_generate_registration_code($school) {
  * @return mixed	
  */
 function get_school_from_registration_code($reg_code) {
-	$lookup_code = hash("md5", get_plugin_setting('schools_private_key', 'schools') . $reg_code);
+	$lookup_code = hash("md5", elgg_get_plugin_setting('schools_private_key', 'schools') . $reg_code);
 	
 	$school = elgg_get_entities_from_metadata(array(
 		'type' => 'object',
@@ -214,41 +157,6 @@ function get_school_from_registration_code($reg_code) {
 	
 	return false;
 } 
-
-/** 
- * Helper function using facebookservice code to route authorization 
- * when attempting to login with facebook 
- * - This is a little messy but it works.. 
- * - Relies on valid session data from facebook ($_REQUEST['session'])
- */
-function schools_authorize() {
-	// Check to make sure we're setup with the facebookservice plugin
-	if (!facebookservice_use_fbconnect()) {
-	        forward();
-	}
-	
-	// Init facebook with current $_REQUEST date
-	$facebook = facebookservice_api();
-	if (!$session = $facebook->getSession()) {
-	        forward();
-	}
-	
-	// Determine if we have a user already (same logic from facebookservice_lib)
-	$values = array(
-	   'plugin:settings:facebookservice:access_token' => $session['access_token'],
-	   'plugin:settings:facebookservice:uid' => $session['uid'],
-	);
-
-	$users = get_entities_from_private_setting_multi($values, 'user', '', 0, '', 0);
-
-	if ($users && count($users) == 1) {
-		// Got a user.. do the usual
-		facebookservice_login();
-	} else {
-		// New user registering, get in the middle and ask for a reg code
-		schools_get_authorize_content();
-	}
-}
 
 /** 
  * Assign a user to a school 
@@ -364,7 +272,6 @@ function schools_register_notify_admins($school, $user) {
 	
 }
 
-
 /**
  * Generate a random string with numbers and letters
  * Modified from: http://www.lost-in-code.com/programming/php-code/php-random-string-with-numbers-and-letters/
@@ -378,4 +285,3 @@ function get_random_string($length = 10) {
     }
     return $string;
 }
-

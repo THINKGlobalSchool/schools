@@ -1,6 +1,6 @@
 <?php
 /**
- * Spotx Schools profile details extension 
+ * Spotx Schools Admin Edit
  * 
  * @package SpotxSchools
  * @license http://www.gnu.org/licenses/old-licenses/gpl-2.0.html GNU Public License version 2
@@ -10,14 +10,5 @@
  * 
  */
 
-$school_info = get_user_school_info($vars['entity']);
-
-if ($school_info) {
-?>
-<p class='even'>
-	<b><?php echo elgg_echo('schools:school'); ?></b>: 
-	<?php echo $school_info; ?>
-</p>
-<?php
-}
-?>
+elgg_load_css('elgg.schools');
+echo schools_get_edit_content('edit', get_input('guid'));

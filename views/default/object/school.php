@@ -10,7 +10,7 @@
  * 
  */
 
-$style = "<style type='text/css'>" . elgg_view('schools/admin_css') . "</style>";
+$full = elgg_extract('full_view', $vars, FALSE);
 
 $school = (isset($vars['entity'])) ? $vars['entity'] : FALSE;
 
@@ -18,37 +18,27 @@ if (!$school) {
 	return '';
 }
 
-$owner = get_entity($school->owner_guid);
-$owner_icon = elgg_view('profile/icon', array('entity' => $owner, 'size' => 'tiny'));
-$owner_link = "<a href=\"{$owner->getURL()}\">{$owner->name}</a>";
-$author_text = sprintf(elgg_echo('school:author_by_line'), $owner_link);
-$linked_title = "<a href=\"{$school->getURL()}\" title=\"" . htmlentities($school->title) . "\">{$school->title}</a>";
-$date = elgg_view_friendly_time($school->time_updated);
+$linked_title = "<h3 style='padding-top: 14px;'><a href=\"{$school->getURL()}\" title=\"" . htmlentities($school->title) . "\">{$school->title}</a></h3>";
 
-if ($school->canEdit()) {
-	$edit_url = elgg_get_site_url()."pg/schools/edit/{$school->getGUID()}/";
-	$edit_link = "<span class='school-edit'><a href=\"$edit_url\">" . elgg_echo('edit') . '</a></span>';
+$metadata = elgg_view_menu('entity', array(
+	'entity' => $school,
+	'handler' => 'schools',
+	'sort_by' => 'priority',
+	'class' => 'elgg-menu-hz',
+));
 
-	$delete_url = elgg_get_site_url()."action/schools/delete?guid={$school->getGUID()}";
-	$delete_link = "<span class='school-delete-button'>" . elgg_view('output/confirmlink', array(
-		'href' => $delete_url,
-		'text' => elgg_echo('delete'),
-		'confirm' => elgg_echo('deleteconfirm')
-	)) . "</span>";
 
-	$refresh_url = elgg_get_site_url()."action/schools/refresh?guid={$school->getGUID()}";
-	$refresh_link = elgg_view('output/confirmlink', array(
-		'class' => 'school-action-button',
-		'href' => $refresh_url,
-		'text' => elgg_echo('schools:label:refresh'),
-		'confirm' => elgg_echo('schools:label:refreshconfirm')
-	));
+// brief view
+$params = array(
+	'title' => FALSE,
+	'entity' => $school,
+	'metadata' => $metadata,
+);
+$list_body = elgg_view('object/elements/summary', $params);
 
-	$edit .= "$refresh_link &nbsp;&nbsp; $edit_link $delete_link";
-}
+echo elgg_view_image_block($linked_title, $list_body);
 
-echo $style;
-if ($vars['full']) {
+if ($full) {
 	$description_label = elgg_echo('description');
 	$contact_name_label = elgg_echo("schools:label:contact:name");
 	$contact_phone_label = elgg_echo("schools:label:contact:phone");
@@ -58,59 +48,60 @@ if ($vars['full']) {
 	$registration_code_label = elgg_echo("schools:label:regcode");
 	$private_code_label = elgg_echo("schools:label:privatecode");
 	
-	$school_users = elgg_view('schools/users', $vars);
+	$school_users = elgg_list_entities_from_relationship(array(
+		'relationship' => SCHOOL_RELATIONSHIP,
+		'relationship_guid' => $school->getGUID(),
+		'inverse_relationship' => TRUE,
+		'types' => array('user'),
+		'limit' => 0,
+		'offset' => 0,
+		'count' => FALSE,
+		'full_view' => FALSE,
+	));
+	
+	$users_label = elgg_echo('schools:label:users');
+	
+	$users_module = elgg_view_module('inline', $users_label, $school_users);
 		
-	echo <<<___END
-		<div class='school-header'>
-			<div class='school-header-title'><h2>$linked_title</h2></div>
-			<div class='school-controls'>$edit</div>
-			<div style='clear: both;'></div>
-		</div>
-		<table class='school-info-table'>
-			<tr>
-				<td class='label'><label>$description_label</label></td>
-				<td class='content'>$school->description</td>
-			</tr>
-			<tr>
-				<td class='label'><label>$contact_website_label</label></td>
-				<td class='content'>$school->contact_website</td>
-			</tr>
-			<tr>
-				<td class='label'><label>$contact_name_label</label></td>
-				<td class='content'>$school->contact_name</td>
-			</tr>
-			<tr>
-				<td class='label'><label>$contact_phone_label</label></td>
-				<td class='content'>$school->contact_phone</td>
-			</tr>
-			<tr>
-				<td class='label'><label>$contact_email_label</label></td>
-				<td class='content'>$school->contact_email</td>
-			</tr>
-			<tr>
-				<td class='label'><label>$contact_address_label</label></td>
-				<td class='content'>$school->contact_address</td>
-			</tr>
-			<tr>
-				<td class='label'><label>$registration_code_label</label></td>
-				<td class='content'><strong>$school->registration_code</strong></td>
-			</tr>
-			<tr>
-				<td class='label'><label>$private_code_label</label></td>
-				<td class='content'><strong>$school->private_code</strong></td>
-			</tr>
-		</table>			
-		
-		$school_users
-___END;
-} else {
-	$registration_code_label = elgg_echo("schools:label:code");
-	echo <<<___END
-		<div class='school-listing'>
-			<div class='school-title'>$linked_title</div>
-			<div class='school-controls'>$edit</div>
-			<div class='school-code'>$registration_code_label: $school->registration_code</div>
-		</div>
-___END;
-}
+	echo <<<HTML
+		<table class='school-info-table elgg-table'>
+			<tbody>
+				<tr>
+					<td class='label'><label>$description_label</label></td>
+					<td class='content'>$school->description</td>
+				</tr>
+				<tr>
+					<td class='label'><label>$contact_website_label</label></td>
+					<td class='content'>$school->contact_website</td>
+				</tr>
+				<tr>
+					<td class='label'><label>$contact_name_label</label></td>
+					<td class='content'>$school->contact_name</td>
+				</tr>
+				<tr>
+					<td class='label'><label>$contact_phone_label</label></td>
+					<td class='content'>$school->contact_phone</td>
+				</tr>
+				<tr>
+					<td class='label'><label>$contact_email_label</label></td>
+					<td class='content'>$school->contact_email</td>
+				</tr>
+				<tr>
+					<td class='label'><label>$contact_address_label</label></td>
+					<td class='content'>$school->contact_address</td>
+				</tr>
+				<tr>
+					<td class='label'><label>$registration_code_label</label></td>
+					<td class='content'><strong>$school->registration_code</strong></td>
+				</tr>
+				<tr>
+					<td class='label'><label>$private_code_label</label></td>
+					<td class='content'><strong>$school->private_code</strong></td>
+				</tr>
+			</tbody>
+		</table>		
+		<br />	
+		$users_module
+HTML;
+} 
 ?>

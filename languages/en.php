@@ -12,14 +12,11 @@
 $english = array(
 	
 	'schools:school' => 'School',
-	
-	// Page titles 
-	'schools:title:admin' => 'Manage Schools',
-	'schools:title:add' => 'Add New School', 
-	'schools:title:edit' => 'Edit School', 
-
-	// Menu items
-	'schools:menu' => 'Schools Admin',
+	'admin:schools' => 'Schools',
+	'admin:schools:manage' => 'Manage Schools',
+	'admin:schools:add' => 'Add New School', 
+	'admin:schools:edit' => 'Edit School', 
+	'admin:schools:view' => 'View School',
 	
 	// Labels 
 	'schools:label:contact:name' => 'Contact Name',
@@ -27,23 +24,17 @@ $english = array(
 	'schools:label:contact:email' => 'Contact Email Address',
 	'schools:label:contact:address' => 'Contact Address',
 	'schools:label:contact:website' => 'Website',
-	'schools:label:main' => 'Schools Management', 
-	'schools:label:code' => 'Code',
+	'schools:label:code' => 'Code: %s',
 	'schools:label:regcode' => 'Registration Code', 
 	'schools:label:schoolregcode' => 'School Registration Code', 
 	'schools:label:privatecode' => 'Private Code',
 	'schools:label:new' => 'Create New School',
-	'schools:label:edit' => 'Edit',
 	'schools:label:privatekey' => 'Private Key',
 	'schools:label:privatekeydesc' => 'Used to generate school registration codes. Changing this will invalidate any existing code (Can be anything you want)',
 	'schools:label:refresh' => 'Refresh Code',
 	'schools:label:refreshconfirm' => 'Are you sure you want to refresh the registration code? This will invalidate the existing code!',
-	'schools:label:register' => 'Register with School',
 	'schools:label:users' => 'Users',
-	'schools:label:members' => 'Members',
-	'schools:label:allschools' => 'All',
-	'schools:label:browseschool' => 'Browse by School',
-	
+	'schools:label:currentschools' => 'Current Schools',
 
 	// Confirmation
 	'schools:success:save' => 'Successfully saved school',
@@ -59,7 +50,7 @@ $english = array(
 	'schools:error:invalidcode' => 'Invalid registration code',
 	'schools:error:schoolregerror' => 'Could not register user with school', 
 
-			// Notifications
+	// Notifications
 	'schools:notifyadmin:subject' => 'Spotx New User Notice',
 	'schools:notifyadmin:body' => 'New user registered:
 	

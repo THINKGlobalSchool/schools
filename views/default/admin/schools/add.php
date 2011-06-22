@@ -1,6 +1,6 @@
 <?php
 /**
- * Spotx Schools browse members by school navigation 
+ * Spotx Schools Admin add
  * 
  * @package SpotxSchools
  * @license http://www.gnu.org/licenses/old-licenses/gpl-2.0.html GNU Public License version 2
@@ -9,5 +9,6 @@
  * @link http://www.thinkglobalschool.org/
  * 
  */
-echo elgg_view('members/members_navigation', $vars);
-?>
+
+elgg_load_css('elgg.schools');
+echo schools_get_edit_content('add');

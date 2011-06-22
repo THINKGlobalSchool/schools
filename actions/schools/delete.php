@@ -19,7 +19,7 @@ if (elgg_instanceof($school, 'object', 'school')) {
 	if ($school->delete()) {
 		// Success
 		system_message(elgg_echo('schools:success:delete'));
-		forward('pg/schools');
+		forward('admin/schools/manage');
 		
 	} else {
 		// Error

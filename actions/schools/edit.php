@@ -62,4 +62,4 @@ if (!$school->save()) {
 elgg_clear_sticky_form('school-edit-form');
 
 system_message(elgg_echo('schools:success:save'));
-forward(elgg_get_site_url() . 'pg/schools');
+forward(elgg_get_site_url() . 'admin/schools/manage');
