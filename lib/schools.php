@@ -75,7 +75,6 @@ function schools_get_members_content() {
 		'content' => $content,
 		'sidebar' => elgg_view('members/sidebar'),
 		'title' => $title . " ($num_members)",
-		'buttons' => '',
 		'filter_override' => elgg_view('members/nav', array('selected' => $filter)),
 	);
 
