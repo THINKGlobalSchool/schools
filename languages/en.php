@@ -17,6 +17,7 @@ $english = array(
 	'admin:schools:add' => 'Add New School', 
 	'admin:schools:edit' => 'Edit School', 
 	'admin:schools:view' => 'View School',
+	'item:object:school' => 'Schools',
 	
 	// Labels 
 	'schools:label:contact:name' => 'Contact Name',
