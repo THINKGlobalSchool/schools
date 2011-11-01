@@ -21,6 +21,7 @@ function schools_init() {
 		
 	// Register CSS
 	$schools_css = elgg_get_simplecache_url('css', 'schools/css');
+	elgg_register_simplecache_view('css/schools/css');	
 	elgg_register_css('elgg.schools', $schools_css);	
 		
 	// Add members to the main menu
