@@ -36,7 +36,8 @@ function schools_init() {
 	elgg_register_action('schools/edit', "$action_base/edit.php", 'admin');
 	elgg_register_action('schools/delete', "$action_base/delete.php", 'admin');
 	elgg_register_action('schools/refresh', "$action_base/refresh.php", 'admin');
-	
+	elgg_register_action('schools/authorize', "$action_base/authorize.php", 'public');
+
 	// Extend profile/status (best way I can find at the moment) with a super low priority to display a users school 
 	elgg_extend_view('profile/status', 'schools/details_school', 1);
 	
@@ -48,6 +49,9 @@ function schools_init() {
 	
 	// Register a create handler for school entities
 	elgg_register_event_handler('create', 'object', 'school_create_event_listener');
+	
+	// Register a create handler for user entities
+	elgg_register_event_handler('create', 'user', 'schools_new_facebook_user_listener');
 	
 	// Add submenus
 	elgg_register_event_handler('pagesetup','system','schools_submenus');
@@ -61,6 +65,8 @@ function schools_init() {
 	// User registration plugin hook handler
 	elgg_register_plugin_hook_handler('register', 'user', 'schools_user_registration_handler');
 	
+	elgg_register_plugin_hook_handler('new_facebook_user', 'facebook', 'schools_new_facebook_user_intercept');
+	
 	// Page handler
 	elgg_register_page_handler('schools','schools_page_handler');
 }
@@ -73,11 +79,17 @@ function schools_init() {
 *
 */
 function schools_page_handler($page) {	
-
 	$page_type = $page[0];
 	switch($page_type) {
 		case 'members':
 			schools_get_members_content();
+			break;
+		case 'authorize_school':
+			if (!elgg_is_logged_in() && $_SESSION['need_school_authorize']) {
+				schools_get_authorize_content();
+			} else {
+				forward();
+			}
 			break;
 		default:
 			forward('admin/schools/manage');
@@ -114,6 +126,36 @@ function school_create_event_listener($event, $object_type, $object) {
 	}
 	return true;
 }
+
+/** 
+ * New user created, if we're the facebook_create_user context
+ * assign this user to the school they are registering for. 
+ * This requires the request variable school_guid = xxxx
+ */
+function schools_new_facebook_user_listener($event, $object_type, $object) {
+	$school_guid = get_input('school_guid');
+
+	if (elgg_in_context('facebook_create_user') && $school_guid) {
+		$school = get_entity($school_guid);
+		assign_user_to_school($object, $school);
+
+		// Notify admins
+		schools_register_notify_admins($school, $object);
+	}
+}
+
+function schools_new_facebook_user_intercept($hook, $type, $return, $params) {
+	if (elgg_in_context('valid_school_code')) {
+		// Set new context for user hook
+		elgg_push_context('facebook_create_user');
+		return TRUE;
+	} else {
+		$_SESSION['need_school_authorize'] = 1;
+		forward('schools/authorize_school');
+		return FALSE;
+	}	
+}
+
 
 /**
  * User registration hook handler

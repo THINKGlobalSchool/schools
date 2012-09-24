@@ -83,6 +83,23 @@ function schools_get_members_content() {
 	echo elgg_view_page($title, $body);
 }
 
+/** Get authorize content **/
+function schools_get_authorize_content() {
+	$title = elgg_echo('schools:label:register');
+	
+	$content = elgg_view_form('schools/authorize');
+	
+	$params = array(
+		'content' => $content,
+		'title' => $title,
+		'filter' => ' ',
+	);
+	
+	$body = elgg_view_layout('content', $params);
+	
+	echo elgg_view_page('', $body);
+}
+
 /**
  * Prepare the add/edit form variables
  *
@@ -268,7 +285,6 @@ function schools_register_notify_admins($school, $user) {
 			);
 		}
 	}
-	
 }
 
 /**

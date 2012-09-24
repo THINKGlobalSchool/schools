@@ -28,6 +28,7 @@ $english = array(
 	'schools:label:code' => 'Code: %s',
 	'schools:label:regcode' => 'Registration Code', 
 	'schools:label:schoolregcode' => 'School Registration Code', 
+	'schools:label:register' => 'Register with School',
 	'schools:label:privatecode' => 'Private Code',
 	'schools:label:new' => 'Create New School',
 	'schools:label:privatekey' => 'Private Key',
