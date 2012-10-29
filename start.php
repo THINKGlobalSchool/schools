@@ -210,6 +210,7 @@ function schools_setup_entity_menu($hook, $type, $return, $params) {
 		'text' => elgg_echo("schools:label:code", array($entity->registration_code)),
 		'href' => FALSE,
 		'priority' => 0,
+		'section' => 'info',
 		'item_class' => 'school-code'
 	);
 	$return[] = ElggMenuItem::factory($options);
@@ -221,6 +222,7 @@ function schools_setup_entity_menu($hook, $type, $return, $params) {
 		'href' => elgg_get_site_url() . 'action/schools/refresh?guid=' . $entity->guid,
 		'confirm' => elgg_echo('schools:label:refreshconfirm'),
 		'priority' => 1,
+		'section' => 'buttons',
 		'link_class' => 'elgg-button elgg-button-action',
 	);
 	$return[] = ElggMenuItem::factory($options);
@@ -229,6 +231,7 @@ function schools_setup_entity_menu($hook, $type, $return, $params) {
 		'name' => 'edit',
 		'text' => elgg_echo('edit'),
 		'href' => elgg_get_site_url() . 'admin/schools/edit?guid=' . $entity->guid,
+		'section' => 'core',
 		'priority' => 2,
 	);
 	$return[] = ElggMenuItem::factory($options);
@@ -239,6 +242,7 @@ function schools_setup_entity_menu($hook, $type, $return, $params) {
 		'title' => elgg_echo('delete:this'),
 		'href' => "action/{$params['handler']}/delete?guid={$entity->getGUID()}",
 		'confirm' => elgg_echo('deleteconfirm'),
+		'section' => 'core',
 		'priority' => 3,
 	);
 

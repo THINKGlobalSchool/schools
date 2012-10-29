@@ -35,3 +35,7 @@ li.elgg-list-item {
 li.elgg-list-item:hover {
 	background: #eee;
 }
+
+.elgg-menu-item-refresh {
+	padding-bottom: 5px;
+}
