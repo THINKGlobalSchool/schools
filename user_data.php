@@ -14,7 +14,7 @@ if (elgg_instanceof($user, 'user')) {
 		'guid' => $user->guid,
 	));
 
-	echo "Dumping Metadata:\r\n\r\n";
+	echo "Dumping Metadata for user with GUID: {$user->guid} \r\n\r\n";
 
 	foreach ($metadata as $md) {
 		echo $md->name . ": " . $md->value . "\r\n";
