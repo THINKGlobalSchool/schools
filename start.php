@@ -63,7 +63,7 @@ function schools_init() {
 	elgg_register_plugin_hook_handler('register', 'menu:entity', 'schools_setup_entity_menu', 999);
 	
 	// User registration plugin hook handler
-	elgg_register_plugin_hook_handler('register', 'user', 'schools_user_registration_handler');
+	elgg_register_plugin_hook_handler('register', 'user', 'schools_user_registration_handler', 1);
 	
 	elgg_register_plugin_hook_handler('new_facebook_user', 'facebook', 'schools_new_facebook_user_intercept');
 	
@@ -161,6 +161,7 @@ function schools_new_facebook_user_intercept($hook, $type, $return, $params) {
  * User registration hook handler
  */
 function schools_user_registration_handler($hook, $type, $return, $params) {
+
 	// Get reg code
 	$registration_code = get_input('school_registration_code');
 	
@@ -180,13 +181,13 @@ function schools_user_registration_handler($hook, $type, $return, $params) {
 		elgg_set_ignore_access($ia);
 		throw new RegistrationException(elgg_echo('schools:error:schoolregerror'));
 		return false;
-	}
+	}	
 	
 	// Notify admins
 	schools_register_notify_admins($school, $params['user']);
 	
 	elgg_set_ignore_access($ia);
-	return true;
+	return $return;
 }
 
 /**
