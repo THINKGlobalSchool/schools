@@ -12,5 +12,10 @@
 		<type>elgg_version</type>
 		<version>2011032200</version>
 	</requires>
+	<conflicts>
+		<type>plugin</type>
+		<name>uservalidationbyemail</name>
+		<version>1.8</version>
+	</conflicts>
 	<activate_on_install>true</activate_on_install>
 </plugin_manifest>

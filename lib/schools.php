@@ -288,6 +288,175 @@ function schools_register_notify_admins($school, $user) {
 }
 
 /**
+ * Helper to notify admins that a new user has attempted to register
+ *
+ * @param int   $user_guid The user's GUID
+ * @return mixed
+ */
+function schools_register_notify_admins_pending($user_guid) {
+	global $CONFIG;
+	$site = elgg_get_site_entity();
+
+	$user_guid = (int)$user_guid;
+	$user = get_entity($user_guid);
+
+	if (($user) && ($user instanceof ElggUser)) {
+		// Get admins
+		$admins = elgg_get_entities_from_metadata(array(
+			'type' => 'user',
+			'limit' => 0,
+			'joins' => array("JOIN {$CONFIG->dbprefix}users_entity ue on ue.guid = e.guid"),
+			'wheres' => array('ue.admin = "yes"'),
+		));
+		
+		$result = TRUE;
+
+		foreach($admins as $admin) {
+			if ($admin) {
+				$user_link = "<a href='{$user->getURL()}'>{$user->name}</a>";
+
+				$result &= notify_user( 
+					$admin->getGUID(), $CONFIG->site->guid, 
+					elgg_echo('schools:notifyadminpending:subject'), 
+					elgg_echo('schools:notifyadminpending:body', array(
+						$user->name, 
+						$user->email,
+						$user->reg_school_role,
+						$user->reg_school_name,
+						$user->reg_school_url,
+						$user->reg_about_url,
+					))
+				);
+			}
+		}
+
+		if ($result) {
+			system_message(elgg_echo('schools:success:pendingnotify'));
+		} else {
+			register_error(elgg_echo('schools:error:pendingnotify'));
+		}
+
+		return $result;
+	}
+
+	return FALSE;
+}
+
+/** 
+ * Helper function to grab and notifiy admin users that 
+ * a new user has registered with a school
+ *
+ * @param ElggUser 		$user
+ * @return bool
+ */
+function schools_register_notify_approve($user) {
+	global $CONFIG;
+	
+	notify_user( 
+		$user->guid, elgg_get_site_entity()->guid, 
+		elgg_echo('schools:notifyuserapproved:subject'), 
+		elgg_echo('schools:notifyuserapproved:body', array(
+			elgg_get_site_url(),
+			$user->getURL(),
+		)),
+		NULL,
+		'email' // Force notification to email (messages are kind of useless in this cases)
+	);
+}
+
+/**
+ * Get where clause for pending school users
+ *
+ * "Unvalidated" means metadata of  is not set or not truthy.
+ * We can't use elgg_get_entities_from_metadata() because you can't say
+ * "where the entity has metadata set OR it's not equal to 1".
+ *
+ * @return array
+ */
+function schools_get_pending_users_sql_where() {
+	global $CONFIG;
+
+	$approved_id = get_metastring_id('schools_approved');
+	if ($approved_id === false) {
+		$approved_id = add_metastring('schools_approved');
+	}
+
+	$one_id = get_metastring_id('1');
+	if ($one_id === false) {
+		$one_id = add_metastring('1');
+	}
+
+	// thanks to daveb@freenode for the SQL tips!
+	$wheres = array();
+	$wheres[] = "e.enabled='no'";
+	$wheres[] = "NOT EXISTS (
+			SELECT 1 FROM {$CONFIG->dbprefix}metadata md
+			WHERE md.entity_guid = e.guid
+				AND md.name_id = $approved_id
+				AND md.value_id = $one_id)";
+
+	return $wheres;
+}
+
+/**
+ * Gets the approved status of a user.
+ *
+ * @param int $user_guid The user's GUID
+ * @return bool|null Null means status was not set for this user.
+ */
+function schools_get_user_approved_status($user_guid) {
+	$md = elgg_get_metadata(array(
+		'guid' => $user_guid,
+		'metadata_name' => 'schools_approved'
+	));
+	if ($md == false) {
+		return;
+	}
+
+	if ($md[0]->value) {
+		return true;
+	}
+
+	return false;
+}
+
+/**
+ * Set the approved and validated status for a user.
+ * 
+ * Setting validated and validated_method as well for compatibility
+ *
+ * @param int    $user_guid The user's GUID
+ * @param bool   $status    Validated (true) or unvalidated (false)
+ * @param string $method    Optional method to say how a user was validated
+ * @return bool
+ * @since 1.8.0
+ */
+function schools_set_user_approved_status($user_guid, $status, $method = '') {
+	$result1 = create_metadata($user_guid, 'validated', $status, '', 0, ACCESS_PUBLIC, false);
+	$result2 = create_metadata($user_guid, 'validated_method', $method, '', 0, ACCESS_PUBLIC, false);
+	$result3 = create_metadata($user_guid, 'schools_approved', $method, '', 0, ACCESS_PUBLIC, false);
+	if ($result1 && $result2 && $result3) {
+		return true;
+	} else {
+		return false;
+	}
+}
+
+/**
+ * Copy an elgg sticky form
+ *
+ * @param string $form_name The name of the form to copy
+ * @param string $form_copy The name of the copied form
+ */
+function copy_sticky_form($form_name, $form_copy) {
+	// Clear any existing forms with the name of the copied form
+	elgg_clear_sticky_form($form_copy);
+	
+	// Copy the form
+	$_SESSION['sticky_forms'][$form_copy] = $_SESSION['sticky_forms'][$form_name];
+}
+
+/**
  * Generate a random string with numbers and letters
  * Modified from: http://www.lost-in-code.com/programming/php-code/php-random-string-with-numbers-and-letters/
  * @param int $length

@@ -39,3 +39,62 @@ li.elgg-list-item:hover {
 .elgg-menu-item-refresh {
 	padding-bottom: 5px;
 }
+
+/** Reg form styles **/
+div#schools-more-info-container {
+	display: none;
+}
+
+div#schools-more-info-container.more-info-toggled {
+	display: block;
+}
+
+div#schools-more-info-container ul.elgg-input-radios {
+	margin: 5px 15px;
+}
+
+div#schools-more-info-container ul.elgg-input-radios li {
+	margin-top: 5px;
+}
+
+div#schools-more-info-container ul.elgg-input-radios li input {
+	margin-right: 5px;
+}
+
+.schools-reg-spacer {
+	display: inline-block;
+	height: 21px;
+}
+
+.schools-input-disabled {
+	background-color: #DDD;
+}
+
+.schools-text-disabled {
+	color: #AAA;
+}
+
+/* Pending Users Styles */
+.schools-pending-module > .elgg-head * {
+	color: white;
+}
+.schools-pending-module > .elgg-body * {
+	color: #333;
+}
+
+.schools-unapproved-user-details {
+	font-size: small;
+}
+
+.schools-unapproved-user-details label {
+	font-size: small !important;
+}
+
+.schools-unapproved-user-details p {
+	margin-bottom: 0px;
+}
+
+.schools-unapproved-user-details table td {
+	padding-right: 10px;
+	padding-top: 3px;
+}
