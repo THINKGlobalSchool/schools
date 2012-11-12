@@ -383,6 +383,7 @@ function schools_register_notify_admins_pending($user_guid) {
 						$user->reg_school_name,
 						$user->reg_school_url,
 						$user->reg_about_url,
+						elgg_get_site_url() . 'admin/users/pending',
 					))
 				);
 			}
