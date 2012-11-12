@@ -102,6 +102,8 @@ $english = array(
 	School Name: %s
 	School URL: %s
 	About URL: %s
+	
+	View pending user list: %s
 	',
 	
 	'schools:notifyuserapproved:subject' => 'Welcome to SpotX!',
