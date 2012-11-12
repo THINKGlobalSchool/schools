@@ -40,7 +40,7 @@ function schools_init() {
 	elgg_register_action('schools/edit', "$action_base/edit.php", 'admin');
 	elgg_register_action('schools/delete', "$action_base/delete.php", 'admin');
 	elgg_register_action('schools/refresh', "$action_base/refresh.php", 'admin');
-	elgg_register_action('schools/authorize', "$action_base/authorize.php", 'public');
+	elgg_register_action('schools/register', "$action_base/register.php", 'public');
 	elgg_register_action('schools/deleteuser', "$action_base/deleteuser.php", 'admin');
 	elgg_register_action('schools/approve', "$action_base/approve.php", 'admin');
 
@@ -48,7 +48,7 @@ function schools_init() {
 	elgg_extend_view('profile/status', 'schools/details_school', 1);
 	
 	// Extend registration form
-	elgg_extend_view('register/extend', 'schools/registration');
+	elgg_extend_view('register/extend', 'forms/schools/register');
 	
 	// Extend user summary view
 	elgg_extend_view('user/elements/summary', 'schools/user_school');
@@ -57,7 +57,7 @@ function schools_init() {
 	elgg_register_event_handler('create', 'object', 'school_create_event_listener');
 	
 	// Register a create handler for user entities
-	elgg_register_event_handler('create', 'user', 'schools_new_facebook_user_listener');
+	elgg_register_event_handler('create', 'user', 'schools_user_create_listener');
 	
 	// Add submenus
 	elgg_register_event_handler('pagesetup','system','schools_submenus');
@@ -96,9 +96,11 @@ function schools_page_handler($page) {
 		case 'members':
 			schools_get_members_content();
 			break;
-		case 'authorize_school':
-			if (!elgg_is_logged_in() && $_SESSION['need_school_authorize']) {
-				schools_get_authorize_content();
+		case 'school_registration':
+			// Forwarded here because we need to provide a school code or enter
+			// moderation queue
+			if (!elgg_is_logged_in() && $_SESSION['schools_require_approval']) {
+				schools_get_registration_content();
 			} else {
 				forward();
 			}
@@ -141,37 +143,63 @@ function school_create_event_listener($event, $object_type, $object) {
 }
 
 /** 
- * New user created, if we're the facebook_create_user context
+ * New user created, if we're the valid_school_code context
  * assign this user to the school they are registering for. 
  * This requires the request variable school_guid = xxxx
  */
-function schools_new_facebook_user_listener($event, $object_type, $object) {
-	$school_guid = get_input('school_guid');
+function schools_user_create_listener($event, $object_type, $object) {
+	if (elgg_in_context('valid_school_code')) {
+		$school_code = get_input('school_registration_code');
+		
+		$ia = elgg_get_ignore_access();
+		elgg_set_ignore_access(TRUE);
+		
+		$school = get_school_from_registration_code(trim($school_code));
 
-	if (elgg_in_context('facebook_create_user') && $school_guid) {
-		$school = get_entity($school_guid);
-		assign_user_to_school($object, $school);
-
-		// Notify admins
-		schools_register_notify_admins($school, $object);
+		// If we have a valid school
+		if (elgg_instanceof($school, 'object', 'school') && assign_user_to_school($object, $school)) {
+			// Notify admins
+			schools_register_notify_admins($school, $object);
+			elgg_set_ignore_access($ia);
+		} else {
+			$object->delete();
+			elgg_set_ignore_access($ia);
+			throw new RegistrationException(elgg_echo('schools:error:schoolregerror'));
+		}
 	}
 }
 
 function schools_new_facebook_user_intercept($hook, $type, $return, $params) {
 	if (elgg_in_context('valid_school_code')) {
-		// Set new context for user hook
-		elgg_push_context('facebook_create_user');
+		// Good to go!
 		return TRUE;
+	} else if (elgg_in_context('register_moderated')) {
+		// Create user (will be deleted if form is bad)
+		$user = facebook_create_user_with_data($params['facebook'], $params['account']);
+		if (elgg_instanceof($user, 'user')) {
+			// Process the registration form data
+			try {
+				schools_process_registration_form($user);
+				forward();
+			} catch (RegistrationException $e) {
+				register_error($e->getMessage());
+				forward(REFERER);
+			}
+		} else {
+			forward(REFERER);
+		}
+		
 	} else {
-		$_SESSION['need_school_authorize'] = 1;
-		forward('schools/authorize_school');
+		$_SESSION['schools_require_approval'] = 1;
+		forward('schools/school_registration');
 		return FALSE;
 	}	
 }
 
-
 /**
  * User registration hook handler
+ * 
+ * Note, we need to delete users manually because we're throwing exceptions
  */
 function schools_user_registration_handler($hook, $type, $return, $params) {
 	$user = elgg_extract('user', $params);
@@ -191,7 +219,6 @@ function schools_user_registration_handler($hook, $type, $return, $params) {
 
 	// Get reg code
 	$registration_code = get_input('school_registration_code');
-	
 
 	$ia = elgg_get_ignore_access();
 	elgg_set_ignore_access(TRUE);
@@ -209,69 +236,16 @@ function schools_user_registration_handler($hook, $type, $return, $params) {
 			$user->delete();
 			elgg_set_ignore_access($ia);
 			throw new RegistrationException(elgg_echo('schools:error:schoolregerror'));
-			return false;
 		}
 	} else if (!$registration_code) {
-		// No reg code, so check for more info
-		$role        = get_input('reg_school_role');
-		$role_other  = get_input('reg_school_role_other');
-		$school_name = get_input('reg_school_name');
-		$school_url  = get_input('reg_school_url');
-		$about_url   = get_input('reg_about_url'); // Not required
-		
-		// Check required fields (just role and 'other' for now)
-		if (!$role || ($role == 3 && !$role_other)) {
-			$user->delete(); // Nuke the user
-			throw new RegistrationException(elgg_echo('schools:error:requiredfields'));
-			return false;
-		}
-		
-		// Good to go with form inputs, now disable the user
-		// set context so our canEdit() override works
-		elgg_push_context('schools_new_pending_user');
-		$hidden_entities = access_get_show_hidden_status();
-		access_show_hidden_entities(TRUE);
-	
-		// Store provided info as user metadata
-		$user->reg_school_role = ($role == '3') ? $role_other : elgg_echo('schools:label:regrole_' . $role);
-		$user->reg_school_name = $school_name;
-		$user->reg_school_url = $school_url;
-		$user->reg_about_url = $about_url;
-		
-		// Create registration metadata
-		create_metadata($user->guid, "reg_school_role", ($role == '3') ? $role_other : elgg_echo('schools:label:regrole_' . $role), 'text', $user->guid);
-		create_metadata($user->guid, "reg_school_name", $school_name, 'text', $user->guid);
-		create_metadata($user->guid, "reg_school_url", $school_url, 'text', $user->guid);
-		create_metadata($user->guid, "reg_about_url", $about_url, 'text', $user->guid);
-
-		// Non-recursive disable
-		$user->disable('schools_new_pending_user', FALSE);
-		
-		// Set user as unnapproved (and unvalidated) and send admin notification
-		schools_set_user_approved_status($user->guid, FALSE);
-		schools_register_notify_admins_pending($user->guid);
-		
-		// Reset context and hidden entities
-		elgg_pop_context();
-		access_show_hidden_entities($hidden_entities);
-		
-		// Clear the sticky forms
-		elgg_clear_sticky_form('schools_register');
-		elgg_clear_sticky_form('register');
-		
-		// Return successful
-		global $CONFIG;
-		
-		// Seriously hacky way of preventing the 'registeration success' message
-		// without having to return false, or 'die'
-		$CONFIG->translations[get_current_language()]['registerok'] = '';
+		// Process the registration form data
+		schools_process_registration_form($user);
 		return $return;
 	} else {
-		// Invalid code, remove the user and dump back to form
+		// Invalid code
 		$user->delete();
 		elgg_set_ignore_access($ia);
 		throw new RegistrationException(elgg_echo('schools:error:invalidcode'));
-		return false;
 	}
 
 	return $return;
@@ -358,7 +332,11 @@ function schools_allow_new_user_can_edit($hook, $type, $value, $params) {
 	}
 
 	$context = elgg_get_context();
-	if ($context == 'schools_new_pending_user') {
+	if ($context == 'schools_new_pending_user' 
+		|| $context == 'register_moderated' 
+		|| $context == 'valid_school_code' 
+		|| 'schools_disable_user') 
+	{
 		return TRUE;
 	}
 

@@ -83,11 +83,13 @@ function schools_get_members_content() {
 	echo elgg_view_page($title, $body);
 }
 
-/** Get authorize content **/
-function schools_get_authorize_content() {
+/** Get further registration content **/
+function schools_get_registration_content() {
 	$title = elgg_echo('schools:label:register');
 	
-	$content = elgg_view_form('schools/authorize');
+	$content = elgg_view_form('schools/register', NULL, array(
+		'is_hook_form' => TRUE,
+	));
 	
 	$params = array(
 		'content' => $content,
@@ -135,6 +137,62 @@ function schools_prepare_form_vars($school = null) {
 	elgg_clear_sticky_form('school-edit-form');
 
 	return $values;
+}
+
+/**
+ * Reusable registration form processing
+ */
+function schools_process_registration_form($user) {
+	// No reg code, so check for more info
+	$role        = get_input('reg_school_role');
+	$role_other  = get_input('reg_school_role_other');
+	$school_name = get_input('reg_school_name');
+	$school_url  = get_input('reg_school_url');
+	$about_url   = get_input('reg_about_url'); // Not required
+	
+	// Check required fields (just role and 'other' for now)
+	if (!$role || ($role == 3 && !$role_other)) {
+		$user->delete();
+		throw new RegistrationException(elgg_echo('schools:error:requiredfields'));
+	}
+
+	// Good to go with form inputs, now disable the user
+	// set context so our canEdit() override works
+	elgg_push_context('schools_new_pending_user');
+	$hidden_entities = access_get_show_hidden_status();
+	access_show_hidden_entities(TRUE);
+
+	// Store provided info as user metadata
+	$user->reg_school_role = ($role == '3') ? $role_other : elgg_echo('schools:label:regrole_' . $role);
+	$user->reg_school_name = $school_name;
+	$user->reg_school_url = $school_url;
+	$user->reg_about_url = $about_url;
+	
+	// Create registration metadata
+	create_metadata($user->guid, "reg_school_role", ($role == '3') ? $role_other : elgg_echo('schools:label:regrole_' . $role), 'text', $user->guid);
+	create_metadata($user->guid, "reg_school_name", $school_name, 'text', $user->guid);
+	create_metadata($user->guid, "reg_school_url", $school_url, 'text', $user->guid);
+	create_metadata($user->guid, "reg_about_url", $about_url, 'text', $user->guid);
+
+	// Non-recursive disable
+	$user->disable('schools_new_pending_user', FALSE);
+	
+	// Set user as unnapproved (and unvalidated) and send admin notification
+	schools_set_user_approved_status($user->guid, FALSE);
+	schools_register_notify_admins_pending($user->guid);
+	
+	// Reset context and hidden entities
+	elgg_pop_context();
+	access_show_hidden_entities($hidden_entities);
+	
+	// Clear the sticky forms
+	elgg_clear_sticky_form('schools_register');
+	elgg_clear_sticky_form('register');
+	
+	// Seriously hacky way of preventing the 'registeration success' message
+	// without having to return false, or 'die'
+	global $CONFIG;
+	$CONFIG->translations[get_current_language()]['registerok'] = '';
 }
 
 /** 

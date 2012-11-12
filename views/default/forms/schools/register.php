@@ -53,6 +53,7 @@ $role_label = elgg_echo('schools:label:regwhichrole');
 
 $other_input = elgg_view('input/text', array(
 	'name' => 'reg_school_role_other',
+	'style' => 'width: 200px;',
 	'value' => $reg_school_role_other,
 ));
 
@@ -66,7 +67,6 @@ $role_input = elgg_view('input/radio', array(
 			elgg_echo('schools:label:regrole_3') . $other_input => 3,
 		),
 ));
-
 
 // What school?
 $school_name_label = elgg_echo('schools:label:regschoolname');
@@ -94,6 +94,14 @@ $more_info_hidden = elgg_view('input/hidden', array(
 	'name' => 'more_info_toggled',
 	'value' => $more_info_toggled
 ));
+
+// This form might be a 'hook' form. In that case we need some extra fields (ie a submit input)
+// @todo this should be a plugin hook as well?
+if (elgg_extract('is_hook_form', $vars, FALSE)) {
+	// Grab session input from query string
+	$extended_content = elgg_view('input/hidden', array('name' => 'session', 'value' => get_input('session')));
+	$extended_submit = elgg_view('input/submit', array('name' => 'submit', 'value' => elgg_echo('submit')));
+}
 
 // Build form elements
 $content = <<<HTML
@@ -125,6 +133,8 @@ $content = <<<HTML
 		</div>
 		$more_info_hidden
 	</div>
+	$extended_content
+	$extended_submit
 HTML;
 
 echo $content;
