@@ -93,7 +93,14 @@ User: %s
 School: %s',
 
 	'schools:notifyadminpending:subject' => 'Spotx New Pending User Notice',
-	'schools:notifyadminpending:body' => 'New pending user\r\nName: %s\r\nEmail Address: %s\r\nRole: %s\r\nSchool Name: %s\r\nSchool URL: %s\r\nAbout URL: %s\r\nView pending user list: %s',
+	'schools:notifyadminpending:body' => 'New pending user:
+Name: %s
+Email Address: %s
+Role: %s
+School Name: %s
+School URL: %s
+About URL: %s
+View pending user list: %s',
 	
 	'schools:notifyuserapproved:subject' => 'Welcome to SpotX!',
 	'schools:notifyuserapproved:body' => 'Your SpotX account has been approved. Welcome Aboard!

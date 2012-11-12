@@ -71,11 +71,7 @@ function schools_init() {
 	// User registration plugin hook handler
 	elgg_register_plugin_hook_handler('register', 'user', 'schools_user_registration_handler', 1);
 	
-	// Intercept new facebook users
 	elgg_register_plugin_hook_handler('new_facebook_user', 'facebook', 'schools_new_facebook_user_intercept');
-	
-	// Intercept new google users
-	elgg_register_plugin_hook_handler('new_google_user', 'google', 'schools_new_google_user_intercept');
 	
 	// canEdit override to allow not logged in code to disable a user
 	elgg_register_plugin_hook_handler('permissions_check', 'user', 'schools_allow_new_user_can_edit');
@@ -173,9 +169,6 @@ function schools_user_create_listener($event, $object_type, $object) {
 	}
 }
 
-/**
- * Hook handler for new facebook users
- */
 function schools_new_facebook_user_intercept($hook, $type, $return, $params) {
 	if (elgg_in_context('valid_school_code')) {
 		// Good to go!
@@ -196,32 +189,6 @@ function schools_new_facebook_user_intercept($hook, $type, $return, $params) {
 			forward(REFERER);
 		}
 		
-	} else {
-		$_SESSION['schools_require_approval'] = 1;
-		forward('schools/school_registration');
-		return FALSE;
-	}	
-}
-
-/**
- * New Google user intercept
- */
-function schools_new_google_user_intercept($hook, $type, $return, $params) {
-	if (elgg_in_context('valid_school_code')) {
-		// Good to go!
-		return TRUE;
-	} else if (elgg_in_context('register_moderated')) {
-		var_dump($params);
-		die;
-		
-		// Process the registration form data
-		try {
-			schools_process_registration_form($user);
-			forward();
-		} catch (RegistrationException $e) {
-			register_error($e->getMessage());
-			forward(REFERER);
-		}	
 	} else {
 		$_SESSION['schools_require_approval'] = 1;
 		forward('schools/school_registration');
