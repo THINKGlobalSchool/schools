@@ -88,23 +88,20 @@ $english = array(
 	// Notifications
 	'schools:notifyadmin:subject' => 'Spotx New User Notice',
 	'schools:notifyadmin:body' => 'New user registered:
-	
-	User: %s
-	School: %s
-	',
+
+User: %s
+School: %s',
 
 	'schools:notifyadminpending:subject' => 'Spotx New Pending User Notice',
 	'schools:notifyadminpending:body' => 'New pending user:
-	
-	Name: %s
-	Email Address: %s
-	Role: %s
-	School Name: %s
-	School URL: %s
-	About URL: %s
-	
-	View pending user list: %s
-	',
+
+Name: %s
+Email Address: %s
+Role: %s
+School Name: %s
+School URL: %s
+About URL: %s
+View pending user list: %s',
 	
 	'schools:notifyuserapproved:subject' => 'Welcome to SpotX!',
 	'schools:notifyuserapproved:body' => 'Your SpotX account has been approved. Welcome Aboard!
@@ -115,8 +112,7 @@ To log in, visit the following URL:
 
 You can view and edit your profile here:
 
-%s
-	',
+%s',
 );
 
 add_translation('en',$english);
