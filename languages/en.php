@@ -94,7 +94,6 @@ School: %s',
 
 	'schools:notifyadminpending:subject' => 'Spotx New Pending User Notice',
 	'schools:notifyadminpending:body' => 'New pending user:
-
 Name: %s
 Email Address: %s
 Role: %s
