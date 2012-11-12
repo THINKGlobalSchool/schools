@@ -19,11 +19,14 @@ copy_sticky_form('register', 'schools_register');
 
 $ia = elgg_get_ignore_access();
 elgg_set_ignore_access(TRUE);
+
+$handler = get_input('handler');
+
 if ($school = get_school_from_registration_code(trim($registration_code))) { // Valid Code Here	
 	// Call facebook login, with valid code context
 	elgg_set_ignore_access($ia);
 	// Set context for event listeners 
-	elgg_push_context('valid_school_code');
+	elgg_push_context('valid_school_code');	
 	facebook_login(); // Do facebook login
 } else if (!$registration_code) {
 	elgg_set_ignore_access($ia);
