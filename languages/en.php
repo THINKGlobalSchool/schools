@@ -117,7 +117,7 @@ $english = array(
 	'schools:notifyuserapproved:body' => "Your SpotX account has been approved. Welcome Aboard!\nTo log in, visit the following URL:\n%s\nYou can view and edit your profile here:\n%s'",
 	
 	'schools:notifyadminrequest:subject' => 'Spotx New School Request',
-	'schools:notifyadminrequest:body' => "New school request:\nSchool Name: %s\nSchool Info:%s\nSchool Website:%s\nContact:%s\nContact Phone:%s\nContact Email:%s\nContact Address:%s",
+	'schools:notifyadminrequest:body' => "New school request:\nSchool Name: %s\nSchool Info: %s\nSchool Website: %s\nContact: %s\nContact Phone: %s\nContact Email: %s\nContact Address: %s",
 );
 
 add_translation('en',$english);
