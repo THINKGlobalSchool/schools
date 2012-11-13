@@ -326,21 +326,20 @@ function schools_allow_new_user_can_edit($hook, $type, $value, $params) {
 	// $params['user'] is the user to check permissions for.
 	// we want the entity to check, which is a user.
 	$user = elgg_extract('entity', $params);
-
 	if (!($user instanceof ElggUser)) {
 		return;
 	}
-
+	
 	$context = elgg_get_context();
 	if ($context == 'schools_new_pending_user' 
 		|| $context == 'register_moderated' 
 		|| $context == 'valid_school_code' 
-		|| 'schools_disable_user') 
+		|| $context == 'schools_disable_user') 
 	{
 		return TRUE;
 	}
 
-	return;
+	return $value;
 }
 
 // Hook handler for the register action
