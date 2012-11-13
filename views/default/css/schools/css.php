@@ -105,7 +105,7 @@ div#schools-more-info-container ul.elgg-input-radios li input {
 }
 
 .schools-owner-block {
-	
+	margin-top: 4px;
 }
 
 .schools-owner-block a {
