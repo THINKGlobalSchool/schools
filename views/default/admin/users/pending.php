@@ -13,7 +13,6 @@
 elgg_load_css('elgg.schools');
 elgg_load_js('elgg.schools');
 
-
 echo elgg_view_form('schools/pending_bulk', array(
 	'id' => 'schools-pending-users-form',
 ));

@@ -1,6 +1,6 @@
 <?php
 /**
- * Spotx Schools user details extender
+ * Spotx School Request Admin
  * 
  * @package SpotxSchools
  * @license http://www.gnu.org/licenses/old-licenses/gpl-2.0.html GNU Public License version 2
@@ -9,5 +9,10 @@
  * @link http://www.thinkglobalschool.org/
  * 
  */
+
 elgg_load_css('elgg.schools');
-echo "<div class='elgg-subtext schools-owner-block'>" . get_user_school_info($vars['entity']) . "</div>";
+elgg_load_js('elgg.schools');
+
+echo elgg_view_form('schools/requests_bulk', array(
+	'id' => 'schools-pending-requests-form',
+));

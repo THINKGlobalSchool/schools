@@ -43,9 +43,12 @@ function schools_init() {
 	elgg_register_action('schools/register', "$action_base/register.php", 'public');
 	elgg_register_action('schools/deleteuser', "$action_base/deleteuser.php", 'admin');
 	elgg_register_action('schools/approve', "$action_base/approve.php", 'admin');
+	elgg_register_action('schools/request', "$action_base/request.php", 'public');
+	elgg_register_action('schools/approverequest', "$action_base/approverequest.php", 'admin');
+	elgg_register_action('schools/deleterequest', "$action_base/deleterequest.php", 'admin');
 
-	// Extend profile/status (best way I can find at the moment) with a super low priority to display a users school 
-	elgg_extend_view('profile/status', 'schools/details_school', 1);
+	// Show school details on profile details tab
+	elgg_extend_view('profile/tabs/details', 'schools/details_school', 1);
 	
 	// Extend registration form
 	elgg_extend_view('register/extend', 'forms/schools/register');
@@ -76,11 +79,17 @@ function schools_init() {
 	// canEdit override to allow not logged in code to disable a user
 	elgg_register_plugin_hook_handler('permissions_check', 'user', 'schools_allow_new_user_can_edit');
 	
+	// canEdit override to allow not logged in code to create and disable a school entity
+	elgg_register_plugin_hook_handler('permissions_check', 'object', 'schools_allow_school_request_can_edit');
+	
 	// Hook into the register action to duplicate the register sticky form
 	elgg_register_plugin_hook_handler('action', 'register', 'schools_register_hook_handler');
 	
 	// Page handler
 	elgg_register_page_handler('schools','schools_page_handler');
+	
+	// Request Code Page handler
+	elgg_register_page_handler('request_school_code','request_code_page_handler');
 }
 
 /**
@@ -114,6 +123,18 @@ function schools_page_handler($page) {
 }
 
 /**
+* Request Code Page Handler
+* 
+* @param array $page From the page_handler function
+* @return true|false Depending on success
+*
+*/
+function request_code_page_handler($page) {	
+	schools_get_request_code_content();
+	return true;
+}
+
+/**
  * Populates the ->getUrl() method for school entities
  *
  * @param ElggEntity entity
@@ -129,6 +150,7 @@ function school_url($entity) {
 function schools_submenus() {
 	elgg_register_admin_menu_item('administer', 'schools');
 	elgg_register_admin_menu_item('administer', 'manage', 'schools');
+	elgg_register_admin_menu_item('administer', 'managerequests', 'schools');
 	elgg_register_admin_menu_item('administer', 'pending', 'users');
 }
 
@@ -340,6 +362,18 @@ function schools_allow_new_user_can_edit($hook, $type, $value, $params) {
 	}
 
 	return $value;
+}
+
+function schools_allow_school_request_can_edit($hook, $type, $value, $params) {
+	$school = elgg_extract('entity', $params);
+
+	if (!elgg_instanceof($school, 'object', 'school')) {
+		return;
+	}
+
+	if (elgg_get_context() == 'schools_request') {
+		return TRUE;
+	}
 }
 
 // Hook handler for the register action

@@ -40,7 +40,7 @@ $delete = elgg_view('output/confirmlink', array(
 ));
 
 $role_label = elgg_echo('schools:label:adminwhichrole');
-$school_name_label = elgg_echo('schools:label:adminschoolname');
+$school_name_label = elgg_echo('schools:label:schoolname');
 $school_link_label = elgg_echo('schools:label:adminschoollink');
 $about_link_label = elgg_echo('schools:label:adminaboutlink');
 

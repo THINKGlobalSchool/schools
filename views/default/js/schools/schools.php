@@ -21,7 +21,7 @@ elgg.schools.init = function () {
 	// Admin form check all click handler
 	$('.schools-checkall').click(function() {
 		var checked = $(this).attr('checked') == 'checked';
-		$('#schools-pending-users-form .elgg-body').find('input[type=checkbox]').attr('checked', checked);
+		$('#schools-pending-users-form .elgg-body, #schools-pending-requests-form .elgg-body').find('input[type=checkbox]').attr('checked', checked);
 	});
 
 	// Pending users bulk form submit
@@ -31,6 +31,24 @@ elgg.schools.init = function () {
 
 		// check if there are selected users
 		if ($('#schools-pending-users-form .elgg-body').find('input[type=checkbox]:checked').length < 1) {
+			return false;
+		}
+
+		// confirmation
+		if (!confirm($(this).attr('title'))) {
+			return false;
+		}
+
+		$form.attr('action', $(this).attr('href')).submit();
+	});
+	
+	// Pending users bulk form submit
+	$('.schools-request-submit').click(function(event) {
+		var $form = $('#schools-pending-requests-form');
+		event.preventDefault();
+
+		// check if there are selected users
+		if ($('#schools-pending-requests-form .elgg-body').find('input[type=checkbox]:checked').length < 1) {
 			return false;
 		}
 

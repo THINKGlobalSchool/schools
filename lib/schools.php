@@ -102,6 +102,18 @@ function schools_get_registration_content() {
 	echo elgg_view_page('', $body);
 }
 
+function schools_get_request_code_content() {
+	$title = elgg_echo('schools:label:requestcode');
+	
+	$params = array(
+		'content' => elgg_view_form('schools/request', array('name' => 'schools_request')),
+		'title' => $title,
+	);
+	
+	$body = elgg_view_layout('one_column', $params);
+	echo elgg_view_page($title, $body);
+}
+
 /**
  * Prepare the add/edit form variables
  *
@@ -324,12 +336,7 @@ function schools_register_notify_admins($school, $user) {
 	global $CONFIG;
 	
 	// Get admins
-	$admins = elgg_get_entities_from_metadata(array(
-		'type' => 'user',
-		'limit' => 0,
-		'joins' => array("JOIN {$CONFIG->dbprefix}users_entity ue on ue.guid = e.guid"),
-		'wheres' => array('ue.admin = "yes"'),
-	));
+	$admins = schools_get_admins();
 	
 	foreach($admins as $admin) {
 		if ($admin) {
@@ -343,6 +350,55 @@ function schools_register_notify_admins($school, $user) {
 			);
 		}
 	}
+}
+
+/** 
+ * Helper function to grab and notifiy admin users that 
+ * a new school has been requested
+ * @param ElggEntity 	$school
+ * @param ElggUser 		$user
+ * @return bool
+ */
+function schools_request_notify_admins($school) {	
+	global $CONFIG;
+
+	$admins = schools_get_admins();
+	
+	foreach($admins as $admin) {
+		if ($admin) {
+			notify_user( 
+				$admin->getGUID(),
+				$CONFIG->site->guid, 
+				elgg_echo('schools:notifyadminrequest:subject'), 
+				elgg_echo('schools:notifyadminrequest:body', array(
+					$school->title,
+					$school->description,
+					$school->contact_website,
+					$school->contact_name,
+					$school->contact_phone,
+					$school->contact_email,
+					$school->contact_address,
+				))
+			);
+		}
+	}
+}
+
+/**
+ * Grab admin users
+ */
+function schools_get_admins() {
+	global $CONFIG;
+
+	// Get admins
+	$admins = elgg_get_entities_from_metadata(array(
+		'type' => 'user',
+		'limit' => 0,
+		'joins' => array("JOIN {$CONFIG->dbprefix}users_entity ue on ue.guid = e.guid"),
+		'wheres' => array('ue.admin = "yes"'),
+	));
+	
+	return $admins;
 }
 
 /**
@@ -360,12 +416,7 @@ function schools_register_notify_admins_pending($user_guid) {
 
 	if (($user) && ($user instanceof ElggUser)) {
 		// Get admins
-		$admins = elgg_get_entities_from_metadata(array(
-			'type' => 'user',
-			'limit' => 0,
-			'joins' => array("JOIN {$CONFIG->dbprefix}users_entity ue on ue.guid = e.guid"),
-			'wheres' => array('ue.admin = "yes"'),
-		));
+		$admins = schools_get_admins();
 		
 		$result = TRUE;
 

@@ -98,3 +98,17 @@ div#schools-more-info-container ul.elgg-input-radios li input {
 	padding-right: 10px;
 	padding-top: 3px;
 }
+
+.schools-request-form-required {
+	color: red;
+	font-weight: bold;
+}
+
+.schools-owner-block {
+	
+}
+
+.schools-owner-block a {
+	color: #EEEEEE; !important;
+	font-weight: bold;
+}
