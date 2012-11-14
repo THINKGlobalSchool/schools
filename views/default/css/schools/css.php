@@ -104,11 +104,11 @@ div#schools-more-info-container ul.elgg-input-radios li input {
 	font-weight: bold;
 }
 
-.schools-owner-block {
+.elgg-owner-block .schools-info {
 	margin-top: 4px;
 }
 
-.schools-owner-block a {
+.elgg-owner-block .schools-info a {
 	color: #EEEEEE; !important;
 	font-weight: bold;
 }

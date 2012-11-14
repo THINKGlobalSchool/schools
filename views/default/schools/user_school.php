@@ -10,4 +10,4 @@
  * 
  */
 elgg_load_css('elgg.schools');
-echo "<div class='elgg-subtext schools-owner-block'>" . get_user_school_info($vars['entity']) . "</div>";
+echo "<div class='elgg-subtext schools-info'>" . get_user_school_info($vars['entity']) . "</div>";
