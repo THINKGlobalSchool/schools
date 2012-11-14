@@ -24,7 +24,7 @@ elgg_make_sticky_form('schools_request');
 
 // Check inputs
 if (!$title || !$description || !$contact_website || !$contact_name || !$contact_phone || !$contact_email) {
-	register_error(elgg_echo('schools:error:requiredfields'));
+	register_error(elgg_echo('schools:error:maxlength'));
 	forward(REFERER);
 }
 

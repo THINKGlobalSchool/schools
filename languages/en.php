@@ -30,6 +30,7 @@ $english = array(
 	'schools:label:code' => 'Code: %s',
 	'schools:label:regcode' => 'Registration Code', 
 	'schools:label:nocode' => 'No registration code?',
+	'schools:label:havecode' => 'Have a registration code?',
 	'schools:label:schoolregcode' => 'School Registration Code', 
 	'schools:label:register' => 'Register with School',
 	'schools:label:requestcode' => 'Request School Code',
@@ -104,7 +105,7 @@ $english = array(
 	'schools:error:could_not_approve_requests' => 'Could not approve all checked school requests.',
 	'schools:error:could_not_delete_request' => 'Could not delete school request.',
 	'schools:error:could_not_delete_requests' => 'Could not delete all checked school request.',
-	'schools:error:requiredfields' => 'Exceeded Maximum Field Length',
+	'schools:error:maxlength' => 'Exceeded Maximum Field Length',
 
 	// Notifications
 	'schools:notifyadmin:subject' => 'Spotx New User Notice',

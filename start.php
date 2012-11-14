@@ -52,6 +52,7 @@ function schools_init() {
 	
 	// Extend registration form
 	elgg_extend_view('register/extend', 'forms/schools/register');
+	elgg_extend_view('forms/register', 'forms/schools/register_footer');
 	
 	// Extend user summary view
 	elgg_extend_view('user/elements/summary', 'schools/user_school');

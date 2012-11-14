@@ -74,6 +74,10 @@ div#schools-more-info-container ul.elgg-input-radios li input {
 	color: #AAA;
 }
 
+.schools-reg-code-container-hidden {
+	display: none;
+}
+
 /* Pending Users Styles */
 .schools-pending-module > .elgg-head * {
 	color: white;

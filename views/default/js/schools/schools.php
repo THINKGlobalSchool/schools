@@ -71,7 +71,13 @@ elgg.schools.noCodeClick = function(event) {
 			.removeClass('schools-input-disabled');
 		
 		// Remove disabled class from reg code label
-		$('label[for=schools-reg-code]').removeClass('schools-text-disabled');
+		$('label[for=schools-reg-code]')
+			.removeClass('schools-text-disabled');
+			
+		$(this).html(elgg.echo('schools:label:nocode'));
+		
+		// Fade in container
+		$('.schools-reg-code-container').fadeIn('fast');
 		
 		// Set hidden toggled state
 		$('input[name=more_info_toggled]').val('off');
@@ -85,7 +91,13 @@ elgg.schools.noCodeClick = function(event) {
 			.addClass('schools-input-disabled');
 		
 		// Add disabled class to reg code label
-		$('label[for=schools-reg-code]').addClass('schools-text-disabled');
+		$('label[for=schools-reg-code]')
+			.addClass('schools-text-disabled');
+			
+		$(this).html(elgg.echo('schools:label:havecode'));;
+
+		// Fade out container
+		$('.schools-reg-code-container').fadeOut('fast');
 
 		// Set hidden toggled state
 		$('input[name=more_info_toggled]').val('on');

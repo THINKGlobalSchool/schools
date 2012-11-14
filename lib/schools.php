@@ -162,8 +162,8 @@ function schools_process_registration_form($user) {
 	$school_url  = get_input('reg_school_url');
 	$about_url   = get_input('reg_about_url'); // Not required
 	
-	// Check required fields (just role and 'other' for now)
-	if (!$role || ($role == 3 && !$role_other)) {
+	// Check required fields (everything except about url)
+	if (!$role || ($role == 3 && !$role_other) || !$school_name || !$school_url ) {
 		$user->delete();
 		throw new RegistrationException(elgg_echo('schools:error:requiredfields'));
 	}

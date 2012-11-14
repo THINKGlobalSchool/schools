@@ -31,8 +31,11 @@ if ($more_info_toggled == 'on') {
 	$toggled = 'more-info-toggled';
 	$label_class = 'schools-text-disabled';
 	$link_class = 'no-code-toggled-on';
+	$div_class = 'schools-reg-code-container-hidden';
+	$toggler_text = elgg_echo('schools:label:havecode');
 } else {
 	$more_info_toggled = 'off';
+	$toggler_text = elgg_echo('schools:label:nocode');
 }
  
 // Reg code input
@@ -41,7 +44,7 @@ $reg_code_input = elgg_view('input/text', $reg_code_input_options);
 
 // Link to display extra fields for moderated registration questions
 $no_code_link = elgg_view('output/url', array(
-	'text' => elgg_echo('schools:label:nocode'),
+	'text' => $toggler_text,
 	'id' => 'schools-no-code-toggler',
 	'rel' => 'toggle',
 	'href' => '#schools-more-info-container',
@@ -98,15 +101,21 @@ $more_info_hidden = elgg_view('input/hidden', array(
 // This form might be a 'hook' form. In that case we need some extra fields (ie a submit input)
 // @todo this should be a plugin hook as well?
 if (elgg_extract('is_hook_form', $vars, FALSE)) {
+	// Show required label
+	$required = elgg_echo('schools:label:denotesrequired');
+	$required = "<br /><br /><span class='schools-request-form-required '>$required</span>";
 	// Grab session input from query string
 	$extended_content = elgg_view('input/hidden', array('name' => 'session', 'value' => get_input('session')));
 	$extended_submit = elgg_view('input/submit', array('name' => 'submit', 'value' => elgg_echo('submit')));
+	$extended_submit .= $required;
 }
+
+$asterisk = "<span class='schools-request-form-required'>&nbsp;*</span>";
 
 // Build form elements
 $content = <<<HTML
-	<div class="mtm">
-		<label for='schools-reg-code' class='$label_class'>$reg_code_label</label><br />
+	<div class="mtm schools-reg-code-container $div_class">
+		<label for='schools-reg-code' class='$label_class'>$reg_code_label</label>$asterisk<br />
 		$reg_code_input
 	</div>
 	<div>
@@ -116,15 +125,15 @@ $content = <<<HTML
 	</div>
 	<div id='schools-more-info-container' class='$toggled'>
 		<div>
-			<label>$role_label</label><br />
+			<label>$role_label</label>$asterisk<br />
 			$role_input
 		</div><br />
 		<div>
-			<label>$school_name_label</label><br />
+			<label>$school_name_label</label>$asterisk<br />
 			$school_name_input
 		</div><br />
 		<div>
-			<label>$school_link_label</label><br />
+			<label>$school_link_label</label>$asterisk<br />
 			$school_link_input
 		</div><br />
 		<div>
