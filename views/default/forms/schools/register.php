@@ -28,27 +28,30 @@ if ($more_info_toggled == 'on') {
 	$reg_code_input_options['disabled'] = 'DISABLED';
 	$reg_code_input_options['class'] = 'schools-input-disabled';
 	$reg_code_input_options['value'] = NULL;
-	$toggled = 'more-info-toggled';
+	$more_info_div_toggled = 'more-info-toggled';
 	$label_class = 'schools-text-disabled';
-	$link_class = 'no-code-toggled-on';
-	$div_class = 'schools-reg-code-container-hidden';
-	$toggler_text = elgg_echo('schools:label:havecode');
 } else {
 	$more_info_toggled = 'off';
-	$toggler_text = elgg_echo('schools:label:nocode');
+	if ($reg_code_radio == 1) {
+		$reg_code_div_toggled = 'reg-code-toggled';
+	}
 }
+
+$asterisk = "<span class='schools-request-form-required'>&nbsp;*</span>";
  
 // Reg code input
 $reg_code_label = elgg_echo('schools:label:schoolregcode');
 $reg_code_input = elgg_view('input/text', $reg_code_input_options);
 
-// Link to display extra fields for moderated registration questions
-$no_code_link = elgg_view('output/url', array(
-	'text' => $toggler_text,
-	'id' => 'schools-no-code-toggler',
-	'rel' => 'toggle',
-	'href' => '#schools-more-info-container',
-	'class' => $link_class,
+// Reg code radio select
+$reg_code_radio = elgg_view('input/radio', array(
+	'name' => 'reg_code_radio',
+	'value' => $reg_code_radio,
+	'id' => 'schools-registration-code-radio',
+	'options' => array(
+		elgg_echo('schools:label:ihavecode') . $asterisk => 1,
+		elgg_echo('schools:label:donthavecode') . $asterisk => 2,
+	),
 ));
 
 // What do you do? (Don't know what to put here..)
@@ -110,20 +113,16 @@ if (elgg_extract('is_hook_form', $vars, FALSE)) {
 	$extended_submit .= $required;
 }
 
-$asterisk = "<span class='schools-request-form-required'>&nbsp;*</span>";
-
 // Build form elements
 $content = <<<HTML
-	<div class="mtm schools-reg-code-container $div_class">
+	<div>
+		$reg_code_radio
+	</div>
+	<div id='schools-reg-code-container' class="mtm $reg_code_div_toggled">
 		<label for='schools-reg-code' class='$label_class'>$reg_code_label</label>$asterisk<br />
 		$reg_code_input
 	</div>
-	<div>
-		<span class='schools-no-code'>
-			$no_code_link
-		</span>
-	</div>
-	<div id='schools-more-info-container' class='$toggled'>
+	<div id='schools-more-info-container' class='$more_info_div_toggled'>
 		<div>
 			<label>$role_label</label>$asterisk<br />
 			$role_input

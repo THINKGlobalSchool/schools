@@ -15,8 +15,8 @@ elgg.provide('elgg.schools');
 
 // Init function
 elgg.schools.init = function () {	
-	// Register click handler for no code link on reg form
-	$(document).delegate('#schools-no-code-toggler', 'click', elgg.schools.noCodeClick);
+	// Register change handler for reg code radio field
+	$(document).delegate('input[name=reg_code_radio]', 'change', elgg.schools.codeRadioChange);
 	
 	// Admin form check all click handler
 	$('.schools-checkall').click(function() {
@@ -61,10 +61,10 @@ elgg.schools.init = function () {
 	});
 }
 
-// Click handler for no code link on reg form
-elgg.schools.noCodeClick = function(event) {
-	if ($(this).hasClass('no-code-toggled-on')) {
-		$(this).removeClass('no-code-toggled-on');
+// Click handler for reg code radio field on reg form
+elgg.schools.codeRadioChange = function(event) {
+
+	if ($(this).val() == 1) {
 		// Enable code input
 		$('input[name=school_registration_code]')
 			.removeAttr('disabled')
@@ -73,17 +73,16 @@ elgg.schools.noCodeClick = function(event) {
 		// Remove disabled class from reg code label
 		$('label[for=schools-reg-code]')
 			.removeClass('schools-text-disabled');
-			
-		$(this).html(elgg.echo('schools:label:nocode'));
+
+		// Slide in code container
+		$('#schools-reg-code-container').slideToggle();
 		
-		// Fade in container
-		$('.schools-reg-code-container').slideToggle();
-		
+		// Slide up more info container
+		$('#schools-more-info-container').slideUp();
+	
 		// Set hidden toggled state
 		$('input[name=more_info_toggled]').val('off');
-	} else {
-		$(this).addClass('no-code-toggled-on');
-
+	} else if ($(this).val() == 2) {
 		// Clear and disable code input
 		$('input[name=school_registration_code]')
 			.val('')
@@ -93,15 +92,17 @@ elgg.schools.noCodeClick = function(event) {
 		// Add disabled class to reg code label
 		$('label[for=schools-reg-code]')
 			.addClass('schools-text-disabled');
-			
-		$(this).html(elgg.echo('schools:label:havecode'));;
 
-		// Fade out container
-		$('.schools-reg-code-container').slideToggle();
+		// Slide in more info container
+		$('#schools-more-info-container').slideToggle();
+
+		// Slide up code container
+		$('#schools-reg-code-container').slideUp();
 
 		// Set hidden toggled state
 		$('input[name=more_info_toggled]').val('on');
 	}
 }
+
 
 elgg.register_hook_handler('init', 'system', elgg.schools.init);

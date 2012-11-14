@@ -57,7 +57,8 @@ div#schools-more-info-container ul.elgg-input-radios li {
 	margin-top: 5px;
 }
 
-div#schools-more-info-container ul.elgg-input-radios li input {
+div#schools-more-info-container ul.elgg-input-radios li input,
+ul#schools-registration-code-radio li input {
 	margin-right: 5px;
 }
 
@@ -74,8 +75,12 @@ div#schools-more-info-container ul.elgg-input-radios li input {
 	color: #AAA;
 }
 
-.schools-reg-code-container-hidden {
+#schools-reg-code-container {
 	display: none;
+}
+
+#schools-reg-code-container.reg-code-toggled {
+	display: block;
 }
 
 /* Pending Users Styles */
