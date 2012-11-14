@@ -9,6 +9,7 @@
  * @link http://www.thinkglobalschool.org/
  * 
  */
+
 // Display a close link
 $close_url = elgg_add_action_tokens_to_url(elgg_get_site_url() . 'action/welcome/dismiss?name=checklist');
 $close_link = elgg_view('output/confirmlink', array(
@@ -19,3 +20,9 @@ $close_link = elgg_view('output/confirmlink', array(
 ));
 
 echo $close_link;
+
+echo elgg_view('output/url', array(
+	'href' => elgg_get_site_url() . 'welcome_popup/loadpopup',
+	'text' => elgg_echo('welcome:checklist:step1'),
+	'class' => 'welcome-lightbox elgg-lightbox hidden',
+));

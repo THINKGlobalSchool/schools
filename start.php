@@ -14,6 +14,7 @@ elgg_register_event_handler('init', 'system', 'schools_init');
 
 // Init
 function schools_init() {
+
 	// Register and load library
 	elgg_register_library('schools', elgg_get_plugins_path() . 'schools/lib/schools.php');
 	elgg_load_library('schools');
