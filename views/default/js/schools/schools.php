@@ -77,7 +77,7 @@ elgg.schools.noCodeClick = function(event) {
 		$(this).html(elgg.echo('schools:label:nocode'));
 		
 		// Fade in container
-		$('.schools-reg-code-container').fadeIn('fast');
+		$('.schools-reg-code-container').slideToggle();
 		
 		// Set hidden toggled state
 		$('input[name=more_info_toggled]').val('off');
@@ -97,7 +97,7 @@ elgg.schools.noCodeClick = function(event) {
 		$(this).html(elgg.echo('schools:label:havecode'));;
 
 		// Fade out container
-		$('.schools-reg-code-container').fadeOut('fast');
+		$('.schools-reg-code-container').slideToggle();
 
 		// Set hidden toggled state
 		$('input[name=more_info_toggled]').val('on');
