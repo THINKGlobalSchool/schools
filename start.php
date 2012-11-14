@@ -57,14 +57,17 @@ function schools_init() {
 	// Extend user summary view
 	elgg_extend_view('user/elements/summary', 'schools/user_school');
 	
+	// Extend welcome module view
+	elgg_extend_view('welcome/module_extend', 'schools/welcome_module');
+	
 	// Register a create handler for school entities
 	elgg_register_event_handler('create', 'object', 'school_create_event_listener');
 	
 	// Register a create handler for user entities
 	elgg_register_event_handler('create', 'user', 'schools_user_create_listener');
 	
-	// Add submenus
-	elgg_register_event_handler('pagesetup','system','schools_submenus');
+	// Add event handler for pagesetup
+	elgg_register_event_handler('pagesetup','system','schools_pagesetup');
 	
 	// Register URL handler
 	elgg_register_entity_url_handler('object', 'school', 'school_url');
@@ -85,6 +88,9 @@ function schools_init() {
 	
 	// Hook into the register action to duplicate the register sticky form
 	elgg_register_plugin_hook_handler('action', 'register', 'schools_register_hook_handler');
+	
+	// Hook into the welcome plugin to provide custom checklist items
+	elgg_register_plugin_hook_handler('items', 'welcome', 'schools_welcome_items_handler');
 	
 	// Page handler
 	elgg_register_page_handler('schools','schools_page_handler');
@@ -146,13 +152,16 @@ function school_url($entity) {
 }
 
 /**
- * Setup schools submenus
+ * Schools pagesetup handler
  */
-function schools_submenus() {
-	elgg_register_admin_menu_item('administer', 'schools');
-	elgg_register_admin_menu_item('administer', 'manage', 'schools');
-	elgg_register_admin_menu_item('administer', 'managerequests', 'schools');
-	elgg_register_admin_menu_item('administer', 'pending', 'users');
+function schools_pagesetup() {
+	// Admin menu items
+	if (elgg_in_context('admin')) {
+		elgg_register_admin_menu_item('administer', 'schools');
+		elgg_register_admin_menu_item('administer', 'manage', 'schools');
+		elgg_register_admin_menu_item('administer', 'managerequests', 'schools');
+		elgg_register_admin_menu_item('administer', 'pending', 'users');
+	}
 }
 
 /**
@@ -162,7 +171,7 @@ function school_create_event_listener($event, $object_type, $object) {
 	if ($object->getSubtype() == 'school') {
 		school_generate_registration_code($object);
 	}
-	return true;
+	return TRUE;
 }
 
 /** 
@@ -365,6 +374,15 @@ function schools_allow_new_user_can_edit($hook, $type, $value, $params) {
 	return $value;
 }
 
+/**
+ * Override the canEdit() call for if we're in the context of creating a school request.
+ *
+ * @param string $hook
+ * @param string $type
+ * @param bool   $value
+ * @param array  $params
+ * @return bool|null
+ */
 function schools_allow_school_request_can_edit($hook, $type, $value, $params) {
 	$school = elgg_extract('entity', $params);
 
@@ -377,8 +395,16 @@ function schools_allow_school_request_can_edit($hook, $type, $value, $params) {
 	}
 }
 
-// Hook handler for the register action
-function schools_register_hook_handler($hook, $type, $return, $params) {
+/**
+ * Copy the registration sticky form
+ *
+ * @param string $hook
+ * @param string $type
+ * @param bool   $value
+ * @param array  $params
+ * @return bool|null
+ */
+function schools_register_hook_handler($hook, $type, $value, $params) {
 	// Make the register sticky form (action hasn't gotten to it yet at this point)
 	elgg_make_sticky_form('register');
 
@@ -386,5 +412,28 @@ function schools_register_hook_handler($hook, $type, $return, $params) {
 	copy_sticky_form('register', 'schools_register');
 
 	// Carry on
-	return $return;
+	return $value;
+}
+
+/**
+ * Customize items on the welcome checklist
+ *
+ * @param string $hook
+ * @param string $type
+ * @param bool   $value
+ * @param array  $params
+ * @return bool|null
+ */
+function schools_welcome_items_handler($hook, $type, $value, $params) {
+	if (is_array($value)) {
+		$count = count($value);
+		if ($count) {			
+			$group_text = elgg_echo('schools:label:joinagroup', array($group_link));
+			// Add group text to the second last item of the list
+			array_splice($value, $count - 1, 0, $group_text);
+		}
+		
+		array_shift($value); // Get rid of the video link
+	}
+	return $value;
 }

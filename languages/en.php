@@ -69,6 +69,8 @@ $english = array(
 	'schools:label:requestdescription' => 'Fill out the form below to request a school code. You will be contacted if your request is approved.',
 	'schools:label:requestapprovalnote' => 'Note: School contacts WILL NOT be notified that they were approved. You will  need to get in touch with them directly to provide the school registration code',
 	'schools:label:denotesrequired' => '* Required field',
+	'schools:label:joinagroup' => 'Join a <a href="' . elgg_get_site_url() . 'groups/all">group</a>', 
+	'schools:label:closechecklist' => 'Click here to close this checklist',
 
 	// Confirmation
 	'schools:success:save' => 'Successfully saved school',
@@ -84,6 +86,7 @@ $english = array(
 	'schools:success:approved_requests' => 'All checked school requests approved.',
 	'schools:success:deleted_request' => 'School request deleted.',
 	'schools:success:deleted_requests' => 'All checked school requests deleted.',
+	'welcome:checklist:step3' => 'Fill out your profile details',
 		
 	// Error 
 	'schools:error:save' => 'There was an error saving the school',
