@@ -378,6 +378,7 @@ function schools_request_notify_admins($school) {
 					$school->contact_phone,
 					$school->contact_email,
 					$school->contact_address,
+					elgg_get_site_url() . 'admin/schools/managerequests',
 				))
 			);
 		}
