@@ -121,3 +121,34 @@ ul#schools-registration-code-radio li input {
 	color: #EEEEEE; !important;
 	font-weight: bold;
 }
+
+/** Members schools tab **/
+#members-schools-module {
+	width: 35%;
+	float: left;
+}
+
+
+#members-school-user-list {
+	float: right;
+	width: 64%;
+}
+
+#members-schools-module li.elgg-item {
+	border-bottom: 0 none;
+	margin: 0;
+	padding: 2px 1px 2px;
+}
+
+#members-schools-module li.elgg-item:hover {
+	cursor: pointer;
+	background: #eee;
+}
+
+#members-schools-module ul.elgg-list {
+    border-top: 0 none;
+}
+
+#members-schools-module .school-state-selected {
+	background: #ccc !important;
+}

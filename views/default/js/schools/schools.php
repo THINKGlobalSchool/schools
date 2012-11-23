@@ -13,6 +13,8 @@
 //<script>
 elgg.provide('elgg.schools');
 
+elgg.schools.getSchoolUsersURL = 'ajax/view/schools/members_school_users';
+
 // Init function
 elgg.schools.init = function () {	
 	// Register change handler for reg code radio field
@@ -59,6 +61,9 @@ elgg.schools.init = function () {
 
 		$form.attr('action', $(this).attr('href')).submit();
 	});
+
+	// Delegate a click handler for school items on the members page
+	$(document).delegate('.elgg-item-school', 'click', elgg.schools.membersSchoolClick);
 }
 
 // Click handler for reg code radio field on reg form
@@ -104,5 +109,32 @@ elgg.schools.codeRadioChange = function(event) {
 	}
 }
 
+// Click handler for school items on the members page
+elgg.schools.membersSchoolClick = function(event) {
+	var guid = $(this).attr('id');
+	
+	// Spinner
+	$('#members-school-user-list').addClass('elgg-ajax-loader');
+	$('#members-school-user-list').html('');
+
+	// Load
+	elgg.get(elgg.schools.getSchoolUsersURL, {
+		data: {guid: guid}, 
+		success: function(data) {
+			$('#members-school-user-list').removeClass('elgg-ajax-loader');
+			$('#members-school-user-list').html(data);
+		},
+	});
+
+	// Remove selected class
+	$('#members-schools-module').find('li.elgg-item').each(function() {
+		$(this).removeClass('school-state-selected');
+	});
+
+	// Select this school
+	$(this).addClass('school-state-selected');
+
+	event.preventDefault();
+}
 
 elgg.register_hook_handler('init', 'system', elgg.schools.init);

@@ -61,6 +61,9 @@ function schools_init() {
 	// Extend welcome module view
 	elgg_extend_view('welcome/module_extend', 'schools/welcome_module');
 	
+	// Extend navigation/tabs view
+	elgg_extend_view('navigation/tabs', 'schools/members_nav', 2);
+	
 	// Register a create handler for school entities
 	elgg_register_event_handler('create', 'object', 'school_create_event_listener');
 	
@@ -92,12 +95,19 @@ function schools_init() {
 	
 	// Hook into the welcome plugin to provide custom checklist items
 	elgg_register_plugin_hook_handler('items', 'welcome', 'schools_welcome_items_handler');
+
+	// Extend groups page handler
+	elgg_register_plugin_hook_handler('route', 'members', 'schools_route_members_handler', 100);
 	
 	// Page handler
 	elgg_register_page_handler('schools','schools_page_handler');
 	
 	// Request Code Page handler
 	elgg_register_page_handler('request_school_code','request_code_page_handler');
+	
+	// Whitelist ajax views
+	elgg_register_ajax_view('schools/members_school_users');
+	elgg_register_ajax_view('schools/modules/school_users');
 }
 
 /**
@@ -110,9 +120,6 @@ function schools_init() {
 function schools_page_handler($page) {	
 	$page_type = $page[0];
 	switch($page_type) {
-		case 'members':
-			schools_get_members_content();
-			break;
 		case 'school_registration':
 			// Forwarded here because we need to provide a school code or enter
 			// moderation queue
@@ -438,3 +445,52 @@ function schools_welcome_items_handler($hook, $type, $value, $params) {
 	}
 	return $value;
 }
+
+/**
+ * Extend the members page handler
+ *
+ * @param string $hook
+ * @param string $type
+ * @param bool   $value
+ * @param array  $params
+ * @return bool|null
+ */
+function schools_route_members_handler($hook, $type, $value, $params) {
+	// Add filter extend context
+	if (is_array($value['segments']) && $value['segments'][0] == 'schools') {
+		elgg_load_css('elgg.schools');
+		elgg_load_js('elgg.schools');
+		set_input('members_custom_tab_selected', 'schools');
+		
+		if (elgg_is_active_plugin('members-extender')) {
+			elgg_load_library('elgg:membersextender'); 
+			$num_members = members_extender_get_number_users();
+		} else {
+			$num_members = get_number_users();
+		}
+
+		$title = elgg_echo('members');
+		
+		$content = elgg_view('schools/members_schools');
+		
+		if (!$content) {
+			$content = "<div style='width: 100%; text-align: center; margin: 10px;'><strong>No results</strong></div>";
+		}
+		
+		$params = array(
+			'content' => $content,
+			'sidebar' => elgg_view('members/sidebar'),
+			'title' => $title . " ($num_members)",
+			'filter_override' => elgg_view('members/nav', array('selected' => $vars['page'])),
+		);
+
+		$body = elgg_view_layout('content', $params);
+
+		echo elgg_view_page($title, $body);
+		
+		return FALSE;
+	}
+
+	return $value;
+}
+

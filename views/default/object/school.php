@@ -10,6 +10,9 @@
  * 
  */
 
+if (!elgg_is_admin_logged_in()) {
+	forward();
+}
 $full = elgg_extract('full_view', $vars, FALSE);
 
 $school = (isset($vars['entity'])) ? $vars['entity'] : FALSE;

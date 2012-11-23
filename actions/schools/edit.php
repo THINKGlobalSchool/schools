@@ -33,7 +33,7 @@ if (!$title || !$description) {
 if (!$school_guid) {
 	$school = new ElggObject();
 	$school->subtype = 'school';
-	$school->access_id = ACCESS_LOGGED_IN; // @TODO .. what should this be
+	$school->access_id = ACCESS_PRIVATE;
 } else { // Editing
 	$school = get_entity($school_guid);
 	if (!elgg_instanceof($school, 'object', 'school')) {

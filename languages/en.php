@@ -96,6 +96,7 @@ $english = array(
 	'schools:error:delete' => 'School Deleted',
 	'schools:error:edit' => 'There was an error editing the school',
 	'schools:error:invalidcode' => 'Invalid registration code',
+	'schools:error:invalidschool' => 'Invalid school',
 	'schools:error:schoolregerror' => 'Could not register user with school', 
 	'schools:error:pendingnotify' => 'There was an error sending pending notification. Please contact site administrator',
 	'schools:error:unknown_users' => 'Unknown users',

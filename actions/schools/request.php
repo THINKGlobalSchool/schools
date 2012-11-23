@@ -40,12 +40,15 @@ foreach ($verify_inputs as $input) {
 }
 
 elgg_push_context('schools_request');
+$ia = elgg_get_ignore_access();
+elgg_set_ignore_access(TRUE);
 
 // New school
 $school = new ElggObject();
 $school->subtype = 'school';
-$school->access_id = ACCESS_PUBLIC;
-
+$school->access_id = ACCESS_PRIVATE;
+$school->owner_guid = elgg_get_site_entity()->guid;
+$school->container_guid = elgg_get_site_entity()->guid;
 
 // Set fields
 $school->title = $title;
@@ -68,6 +71,8 @@ schools_request_notify_admins($school);
 
 // Disable the school (non-recursive)
 $school->disable('schools_pending_request', FALSE);
+
+elgg_set_ignore_access($ia);
 
 elgg_pop_context();
 

@@ -34,55 +34,6 @@ function schools_get_edit_content($type, $guid = NULL) {
 	echo $content;
 }
 
-/** Get view schools members  **/
-function schools_get_members_content() {	
-	$title = elgg_echo('members');
-	
-	$filter = get_input('filter', null);
-	
-	if (!$filter) {
-		// If no filter, get out of here and display regular members page
-		forward(elgg_get_site_url() . 'members');
-	}
-	
-	// count members
-	$num_members = get_number_users();
-	
-	$options = array(
-		'type' => 'user',
-		'full_view' => FALSE
-	);
-	
-	if (elgg_instanceof($school = get_entity($filter), 'object', 'school')) {
-		$options['relationship'] = SCHOOL_RELATIONSHIP;
-		$options['relationship_guid'] = $school->getGUID();
-		$options['inverse_relationship'] = TRUE;
-		
-	} else if (strtolower($filter) == 'tgs') { // Special TGS filter
-		// Include only users with tgs domains
-		global $CONFIG;
-		
-		// Join elgg_users_entity table so we can check the email
-		$options['joins'] = "JOIN {$CONFIG->dbprefix}users_entity ue on ue.guid = e.guid";
-		
-		// I think a LIKE comparison is ok here..
-		$options['wheres'] = "(ue.email like '%@thinkglobalschool.com' OR ue.email like '%@thinkglobalschool.org')";
-	}
-	
-	$content = elgg_list_entities_from_relationship($options);		
-	
-	$params = array(
-		'content' => $content,
-		'sidebar' => elgg_view('members/sidebar'),
-		'title' => $title . " ($num_members)",
-		'filter_override' => elgg_view('members/nav', array('selected' => $filter)),
-	);
-
-	$body = elgg_view_layout('content', $params);
-
-	echo elgg_view_page($title, $body);
-}
-
 /** Get further registration content **/
 function schools_get_registration_content() {
 	$title = elgg_echo('schools:label:register');
@@ -263,14 +214,14 @@ function assign_user_to_school($user, $school) {
 function get_school_users($school) {
 	if (elgg_instanceof($school, 'object', 'school')) {
 		return elgg_get_entities_from_relationship(array(
-															'relationship' => SCHOOL_RELATIONSHIP,
-															'relationship_guid' => $school->getGUID(),
-															'inverse_relationship' => TRUE,
-															'types' => array('user'),
-															'limit' => 0,
-															'offset' => 0,
-															'count' => false,
-														));
+			'relationship' => SCHOOL_RELATIONSHIP,
+			'relationship_guid' => $school->getGUID(),
+			'inverse_relationship' => TRUE,
+			'types' => array('user'),
+			'limit' => 0,
+			'offset' => 0,
+			'count' => false,
+		));
 	}
 }
 
@@ -281,18 +232,18 @@ function get_school_users($school) {
  */
 function get_user_school($user) {
 	if ($user) {
-	
-		
+
 		$school = elgg_get_entities_from_relationship(array(
-															'relationship' => SCHOOL_RELATIONSHIP,
-															'relationship_guid' => $user->getGUID(),
-															'inverse_relationship' => FALSE,
-															'types' => array('object'),
-															'subtype' => 'school',
- 															'limit' => 1,
-															'offset' => 0,
-															'count' => false,
-														));
+			'relationship' => SCHOOL_RELATIONSHIP,
+			'relationship_guid' => $user->getGUID(),
+			'inverse_relationship' => FALSE,
+			'types' => array('object'),
+			'subtype' => 'school',
+			'limit' => 1,
+			'offset' => 0,
+			'count' => false,
+		));
+
 		return $school[0];
 	}
 }
@@ -305,6 +256,9 @@ function get_user_school($user) {
  * @return string
  */
 function get_user_school_info($user) {
+	$ia = elgg_get_ignore_access($ia);
+	elgg_set_ignore_access(TRUE);
+
 	$user_school = get_user_school($user);
 	
 	// If we have a school, great, display it
@@ -314,12 +268,14 @@ function get_user_school_info($user) {
 		} else {
 			$school_info = $user_school->title;
 		}
+		elgg_set_ignore_access($ia);
 		return $school_info;
 	} else {
 		// Check for TGS domain
 		if (preg_match("/.*?(thinkglobalschool)/is", $user->email)) {
 			return "<a href='http://www.thinkglobalschool.org'>THINK Global School</a>";
 		}
+		elgg_set_ignore_access($ia);
 		// Nothing..
 		return false;
 	}
