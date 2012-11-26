@@ -12,11 +12,15 @@
 
 $guid = elgg_extract('guid', $vars);
 
+set_input('user_gallery_size', 'medium');
+elgg_push_context('members');
+
 // Schools options
 $options = array(
 	'type' => 'user',
 	'full_view' => FALSE,
-	'limit' => 15,
+	'limit' => 12,
+	'list_type' => 'gallery',
 );
 
 // Schools are private, need to ignore access to grab info
