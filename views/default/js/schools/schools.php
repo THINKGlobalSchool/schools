@@ -196,3 +196,4 @@ elgg.schools.addUserSchoolClick = function(event) {
 }
 
 elgg.register_hook_handler('init', 'system', elgg.schools.init);
+elgg.register_hook_handler('populated', 'modules', elgg.schools.initAddUserLightbox);
