@@ -152,3 +152,8 @@ ul#schools-registration-code-radio li input {
 #members-schools-module .school-state-selected {
 	background: #ccc !important;
 }
+
+/** Add user to school popup **/
+.schools-add-user-popup-content {
+	width: 250px;
+}

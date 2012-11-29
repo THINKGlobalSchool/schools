@@ -17,6 +17,9 @@ elgg.schools.getSchoolUsersURL = 'ajax/view/schools/members_school_users';
 
 // Init function
 elgg.schools.init = function () {	
+	// Init schools add user lightboxes
+	elgg.schools.initAddUserLightbox();
+
 	// Register change handler for reg code radio field
 	$(document).delegate('input[name=reg_code_radio]', 'change', elgg.schools.codeRadioChange);
 	
@@ -64,6 +67,9 @@ elgg.schools.init = function () {
 
 	// Delegate a click handler for school items on the members page
 	$(document).delegate('.elgg-item-school', 'click', elgg.schools.membersSchoolClick);
+
+	// Register click handler for add user to group submit
+	$(document).delegate('.schools-add-user-submit', 'click', elgg.schools.addUserSchoolClick);
 }
 
 // Click handler for reg code radio field on reg form
@@ -134,6 +140,58 @@ elgg.schools.membersSchoolClick = function(event) {
 	// Select this school
 	$(this).addClass('school-state-selected');
 
+	event.preventDefault();
+}
+
+/**
+ * Init lightboxes (can be called manually)
+ */
+elgg.schools.initAddUserLightbox = function() {
+	$('.schools-add-user-popup').colorbox({
+		'initialWidth' : '50',
+		'initialHeight' : '50',
+		'title' : function() {
+			return "<h2>" + $(this).attr('title') + "</h2>";
+		},
+		'onComplete' : function() {
+			$(this).colorbox.resize();
+		},
+		'onOpen' : function() {
+			$(this).removeClass('cboxElement');
+		},
+		'onClosed' : function() {
+			$(this).addClass('cboxElement');
+		}
+	});	
+}
+
+// Click handler for add user to school click
+elgg.schools.addUserSchoolClick = function(event) {	
+	var $_this = $(this);
+	
+	$_this.attr('disabled', 'DISABLED');
+
+	var $form = $(this).closest('form');
+	var values = {};
+	$.each($form.serializeArray(), function(i, field) {
+	    values[field.name] = field.value;
+	});
+
+	// Add/remove the group
+	elgg.action($form.attr('action'), {
+		data: values,
+		success: function(json) {
+			if (json.status >= 0) {
+				// Success
+			} else {
+				// Error..
+				$_this.removeAttr('disabled');
+			}
+			$.colorbox.close();
+		}
+	});
+
+	
 	event.preventDefault();
 }
 

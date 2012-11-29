@@ -23,11 +23,13 @@ function schools_init() {
 	$schools_css = elgg_get_simplecache_url('css', 'schools/css');
 	elgg_register_simplecache_view('css/schools/css');	
 	elgg_register_css('elgg.schools', $schools_css);	
+	elgg_load_css('elgg.schools');
 	
 	// Register JS
 	$schools_js = elgg_get_simplecache_url('js', 'schools/schools');
 	elgg_register_simplecache_view('js/schools/schools');	
 	elgg_register_js('elgg.schools', $schools_js);
+	elgg_load_js('elgg.schools');
 		
 	// Add members to the main menu
 	$item = new ElggMenuItem('members', elgg_echo('Members'), 'members');
@@ -47,6 +49,7 @@ function schools_init() {
 	elgg_register_action('schools/request', "$action_base/request.php", 'public');
 	elgg_register_action('schools/approverequest', "$action_base/approverequest.php", 'admin');
 	elgg_register_action('schools/deleterequest', "$action_base/deleterequest.php", 'admin');
+	elgg_register_action('schools/adduser', "$action_base/adduser.php", 'admin');
 
 	// Show school details on profile details tab
 	elgg_extend_view('profile/tabs/details', 'schools/details_school', 1);
@@ -63,7 +66,10 @@ function schools_init() {
 	
 	// Extend navigation/tabs view
 	elgg_extend_view('navigation/tabs', 'schools/members_nav', 2);
-	
+
+	// Extend avatar hover
+	elgg_extend_view('avatar/hover_extend', 'schools/hover_extend');	
+
 	// Register a create handler for school entities
 	elgg_register_event_handler('create', 'object', 'school_create_event_listener');
 	
@@ -78,6 +84,9 @@ function schools_init() {
 	
 	// Schools entity menu hook
 	elgg_register_plugin_hook_handler('register', 'menu:entity', 'schools_setup_entity_menu', 999);
+
+	// User menu hook
+	elgg_register_plugin_hook_handler('register', 'menu:user_hover', 'schools_user_hover_menu_setup', 9999);
 	
 	// User registration plugin hook handler
 	elgg_register_plugin_hook_handler('register', 'user', 'schools_user_registration_handler', 1);
@@ -108,6 +117,7 @@ function schools_init() {
 	// Whitelist ajax views
 	elgg_register_ajax_view('schools/members_school_users');
 	elgg_register_ajax_view('schools/modules/school_users');
+	elgg_register_ajax_view('schools/popup/addtoschool');
 }
 
 /**
@@ -234,6 +244,25 @@ function schools_new_facebook_user_intercept($hook, $type, $return, $params) {
 		forward('schools/school_registration');
 		return FALSE;
 	}	
+}
+
+/**
+ * Extend the user hover menu
+ */
+function schools_user_hover_menu_setup($hook, $type, $return, $params) {
+	$user = $params['entity'];
+
+	$options = array(
+		'name' => 'add_user_to_school',
+		'text' => elgg_echo('schools:label:addusertoschool'),
+		'href' => elgg_get_site_url() . 'ajax/view/schools/popup/addtoschool?guid=' . $user->guid,
+		'link_class' => 'schools-add-user-popup',
+		'title' => elgg_echo('schools:label:addusertoschool'),
+		'section' => 'admin',
+	);
+	$return[] = ElggMenuItem::factory($options);
+
+	return $return;
 }
 
 /**
@@ -458,8 +487,6 @@ function schools_welcome_items_handler($hook, $type, $value, $params) {
 function schools_route_members_handler($hook, $type, $value, $params) {
 	// Add filter extend context
 	if (is_array($value['segments']) && $value['segments'][0] == 'schools') {
-		elgg_load_css('elgg.schools');
-		elgg_load_js('elgg.schools');
 		set_input('members_custom_tab_selected', 'schools');
 		
 		if (elgg_is_active_plugin('members-extender')) {

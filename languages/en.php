@@ -71,6 +71,10 @@ $english = array(
 	'schools:label:denotesrequired' => '* Required field',
 	'schools:label:joinagroup' => 'Join a <a href="' . elgg_get_site_url() . 'groups/all">group</a>', 
 	'schools:label:closechecklist' => 'Click here to close this checklist',
+	'schools:label:addusertoschool' => 'Assign user to School',
+	'schools:label:addtoschool' => 'Assign to school',
+	'schools:label:selectschool' => 'Select School',
+	'welcome:checklist:step3' => 'Fill out your profile details',
 
 	// Confirmation
 	'schools:success:save' => 'Successfully saved school',
@@ -86,7 +90,7 @@ $english = array(
 	'schools:success:approved_requests' => 'All checked school requests approved.',
 	'schools:success:deleted_request' => 'School request deleted.',
 	'schools:success:deleted_requests' => 'All checked school requests deleted.',
-	'welcome:checklist:step3' => 'Fill out your profile details',
+	'schools:success:assignuser' => 'User successfully assigned to school',
 		
 	// Error 
 	'schools:error:save' => 'There was an error saving the school',
@@ -97,6 +101,7 @@ $english = array(
 	'schools:error:edit' => 'There was an error editing the school',
 	'schools:error:invalidcode' => 'Invalid registration code',
 	'schools:error:invalidschool' => 'Invalid school',
+	'schools:error:invaliduser' => 'Invalid user',
 	'schools:error:schoolregerror' => 'Could not register user with school', 
 	'schools:error:pendingnotify' => 'There was an error sending pending notification. Please contact site administrator',
 	'schools:error:unknown_users' => 'Unknown users',
@@ -110,6 +115,7 @@ $english = array(
 	'schools:error:could_not_delete_request' => 'Could not delete school request.',
 	'schools:error:could_not_delete_requests' => 'Could not delete all checked school request.',
 	'schools:error:maxlength' => 'Exceeded Maximum Field Length',
+	'schools:error:assignuser' => 'There was an error assigning user to school',
 
 	// Notifications
 	'schools:notifyadmin:subject' => 'Spotx New User Notice',
