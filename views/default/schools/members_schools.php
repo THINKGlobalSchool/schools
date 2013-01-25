@@ -37,9 +37,13 @@ if ($schools) {
 	
 	echo <<<JAVASCRIPT
 		<script type='text/javascript'>
-			$(document).ready(function() {
-				$('li#tgs').trigger('click');
-			});
+			var members_schools_init_default = function() {
+				$('li#tgs').trigger('click');				
+			}
+
+			// Need to click AFTER elgg is initted
+			elgg.register_hook_handler('ready', 'system', members_schools_init_default);
+
 		</script>
 JAVASCRIPT;
 }
