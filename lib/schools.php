@@ -273,10 +273,11 @@ function get_user_school_info($user) {
 	} else {
 		// Check for TGS domain
 		if (preg_match("/.*?(thinkglobalschool)/is", $user->email)) {
+			elgg_set_ignore_access($ia);
 			return "<a href='http://www.thinkglobalschool.org'>THINK Global School</a>";
 		}
-		elgg_set_ignore_access($ia);
 		// Nothing..
+		elgg_set_ignore_access($ia);
 		return false;
 	}
 }
