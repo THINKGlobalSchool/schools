@@ -511,7 +511,7 @@ function schools_route_members_handler($hook, $type, $value, $params) {
 			'filter_override' => elgg_view('members/nav', array('selected' => $vars['page'])),
 		);
 
-		$body = elgg_view_layout('content', $params);
+		$body = elgg_view_layout('content_one_column', $params);
 
 		echo elgg_view_page($title, $body);
 		

@@ -124,14 +124,14 @@ ul#schools-registration-code-radio li input {
 
 /** Members schools tab **/
 #members-schools-module {
-	width: 35%;
+	width: 25%;
 	float: left;
 }
 
 
 #members-school-user-list {
 	float: right;
-	width: 64%;
+	width: 74%;
 }
 
 #members-schools-module li.elgg-item {
