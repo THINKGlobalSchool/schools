@@ -113,7 +113,7 @@ function schools_init() {
 	
 	// Request Code Page handler
 	elgg_register_page_handler('request_school_code','request_code_page_handler');
-	
+
 	// Whitelist ajax views
 	elgg_register_ajax_view('schools/members_school_users');
 	elgg_register_ajax_view('schools/modules/school_users');
@@ -121,12 +121,12 @@ function schools_init() {
 }
 
 /**
-* Schools Page Handler
-* 
-* @param array $page From the page_handler function
-* @return true|false Depending on success
-*
-*/
+ * Schools Page Handler
+ * 
+ * @param array $page From the page_handler function
+ * @return true|false Depending on success
+ *
+ */
 function schools_page_handler($page) {	
 	$page_type = $page[0];
 	switch($page_type) {
@@ -148,12 +148,12 @@ function schools_page_handler($page) {
 }
 
 /**
-* Request Code Page Handler
-* 
-* @param array $page From the page_handler function
-* @return true|false Depending on success
-*
-*/
+ * Request Code Page Handler
+ * 
+ * @param array $page From the page_handler function
+ * @return true|false Depending on success
+ *
+ */
 function request_code_page_handler($page) {	
 	schools_get_request_code_content();
 	return true;
@@ -173,6 +173,12 @@ function school_url($entity) {
  * Schools pagesetup handler
  */
 function schools_pagesetup() {
+	// Unextend sidebars
+	if (elgg_in_context('members')) {
+		elgg_unextend_view('page/elements/sidebar_alt', 'spotxtheme/reportthis');
+		elgg_unextend_view('page/elements/sidebar', 'spotxtheme/reportthis');
+	}
+
 	// Admin menu items
 	if (elgg_in_context('admin')) {
 		elgg_register_admin_menu_item('administer', 'schools');
@@ -488,7 +494,7 @@ function schools_route_members_handler($hook, $type, $value, $params) {
 	// Add filter extend context
 	if (is_array($value['segments']) && $value['segments'][0] == 'schools') {
 		set_input('members_custom_tab_selected', 'schools');
-		
+
 		if (elgg_is_active_plugin('members-extender')) {
 			elgg_load_library('elgg:membersextender'); 
 			$num_members = members_extender_get_number_users();
@@ -506,12 +512,11 @@ function schools_route_members_handler($hook, $type, $value, $params) {
 		
 		$params = array(
 			'content' => $content,
-			'sidebar' => elgg_view('members/sidebar'),
 			'title' => $title . " ($num_members)",
 			'filter_override' => elgg_view('members/nav', array('selected' => $vars['page'])),
 		);
 
-		$body = elgg_view_layout('content_one_column', $params);
+		$body = elgg_view_layout('content', $params);
 
 		echo elgg_view_page($title, $body);
 		
