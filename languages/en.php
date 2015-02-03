@@ -5,11 +5,11 @@
  * @package SpotxSchools
  * @license http://www.gnu.org/licenses/old-licenses/gpl-2.0.html GNU Public License version 2
  * @author Jeff Tilson
- * @copyright THINK Global School 2010
+ * @copyright THINK Global School 2010 - 2015
  * @link http://www.thinkglobalschool.com/
  * 
  */
-$english = array(
+return array(
 	
 	'schools:school' => 'School',
 	'admin:schools' => 'Schools',
@@ -130,5 +130,3 @@ $english = array(
 	'schools:notifyadminrequest:subject' => 'Spotx New School Request',
 	'schools:notifyadminrequest:body' => "New school request:\nSchool Name: %s\nSchool Info: %s\nSchool Website: %s\nContact: %s\nContact Phone: %s\nContact Email: %s\nContact Address: %s\nView school request list: %s",
 );
-
-add_translation('en',$english);

@@ -21,13 +21,11 @@ function schools_init() {
 
 	// Register CSS
 	$schools_css = elgg_get_simplecache_url('css', 'schools/css');
-	elgg_register_simplecache_view('css/schools/css');	
 	elgg_register_css('elgg.schools', $schools_css);	
 	elgg_load_css('elgg.schools');
 	
 	// Register JS
 	$schools_js = elgg_get_simplecache_url('js', 'schools/schools');
-	elgg_register_simplecache_view('js/schools/schools');	
 	elgg_register_js('elgg.schools', $schools_js);
 	elgg_load_js('elgg.schools');
 		
@@ -80,7 +78,7 @@ function schools_init() {
 	elgg_register_event_handler('pagesetup','system','schools_pagesetup');
 	
 	// Register URL handler
-	elgg_register_entity_url_handler('object', 'school', 'school_url');
+	elgg_register_plugin_hook_handler('entity:url', 'object', 'school_url');
 	
 	// Schools entity menu hook
 	elgg_register_plugin_hook_handler('register', 'menu:entity', 'schools_setup_entity_menu', 999);
@@ -160,13 +158,23 @@ function request_code_page_handler($page) {
 }
 
 /**
- * Populates the ->getUrl() method for school entities
+ * Returns the URL from a school entity
  *
- * @param ElggEntity entity
- * @return string request url
+ * @param string $hook   'entity:url'
+ * @param string $type   'object'
+ * @param string $url    The current URL
+ * @param array  $params Hook parameters
+ * @return string
  */
-function school_url($entity) {
-	return elgg_get_site_url() . 'admin/schools/view?guid=' . $entity->guid;
+function school_url($hook, $type, $url, $params) {
+	$entity = $params['entity'];
+
+	// Check that the entity is a school object
+	if (!elgg_instanceof($entity, 'object', 'school')) {
+		return;
+	}
+
+	return "admin/schools/view?guid={$entity->guid}";
 }
 
 /**
